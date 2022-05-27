@@ -208,6 +208,9 @@
 		.fieldset input {
 			height: 34.14px !important;
 		}
+		.bootstrap-datetimepicker-widget{
+			z-index: 9999999;
+		}
 	</style>
 	<!--[if gte IE 5]><frame></frame><![endif]-->
 	<script src="file:///C:/Users/giorgi/AppData/Local/Temp/Rar$EXa10780.17568/www.spruko.com/demo/dashlead/assets/plugins/ionicons/ionicons/ionicons.z18qlu2u.js" data-resources-url="file:///C:/Users/giorgi/AppData/Local/Temp/Rar$EXa10780.17568/www.spruko.com/demo/dashlead/assets/plugins/ionicons/ionicons/" data-namespace="ionicons"></script>
@@ -632,9 +635,8 @@
 					success: function(data) {
 						$('#get_edit_page').html(data.page);
 						$("#personal,#statuses,#cabinet").chosen();
-						$("#order_date").datetimepicker({
-							dateFormat: "yy-mm-dd",
-							timeFormat: "HH:mm:ss"
+						$("#order_date").timepicker({
+							uiLibrary: 'bootstrap4'
 						});
 						/* $(document).on('click', '#sex_set label', function() {
 							var sex_id = $(this).prev().val();
