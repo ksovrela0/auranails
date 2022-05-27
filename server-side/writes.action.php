@@ -1365,27 +1365,15 @@ function getPage($id, $res = ''){
                 <label>მისამართი</label>
                 <input value="'.$res['client_addr'].'" data-nec="0" style="height: 18px; width: 95%;" type="text" id="client_addr" class="idle" autocomplete="off">
             </div>
-            
-            <div class="col-sm-12">---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------</div>
+
             <div class="col-sm-3">
-                <label>შეკვეთის თარიღი</label>
+                <label>ჩაწერის თარიღი</label>
                 <input value="'.$res['datetime'].'" data-nec="0" style="height: 18px; width: 95%;" type="text" id="order_date" class="idle" autocomplete="off">
             </div>
-            <div class="col-sm-3">
-                <label>სულ გადასახდელი</label>
-                <input value="'.$res['total'].'" data-nec="0" style="height: 18px; width: 95%;" type="number" step=".01" id="pay_total" class="idle" autocomplete="off">
-            </div>
-            <div class="col-sm-3">
-                <label>ავანსი</label>
-                <input value="'.$res['avansi'].'" data-nec="0" style="height: 18px; width: 95%;" type="number" step=".01" id="avansi" class="idle" autocomplete="off">
-            </div>
-            <div class="col-sm-3">
-                <label>დამატებული თანხა</label>
-                <input value="'.$res['avans_plus'].'" data-nec="0" style="height: 18px; width: 95%;" type="number" step=".01" id="avans_plus" class="idle" autocomplete="off">
-            </div>
+
             <div class="col-sm-12">---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------</div>
             <div class="col-sm-12">
-                <label>პროდუქცია</label>
+                <label>პროცედურები</label>
                 <div id="product_div"></div>
             </div>
             
