@@ -24,7 +24,7 @@
 <link href="assets/switcher/css/switcher.css" rel="stylesheet">
 <link href="assets/switcher/demo.css" rel="stylesheet">
 <link href="assets/css/kendoUI/kendo.common.min.css" rel="stylesheet" type="text/css"/>
-<link href="assets/css/kendoUI/kendo.bootstrap-v4.min.css" rel="stylesheet" type="text/css"/>
+<link href="assets/css/kendoUI/kendo.default.min.css" rel="stylesheet" type="text/css"/>
 
 <link href="assets/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
 <link href="assets/plugins/jquery-ui/chosen.css" rel="stylesheet" type="text/css"/>

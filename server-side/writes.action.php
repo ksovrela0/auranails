@@ -381,12 +381,11 @@ switch ($act){
         $id             = $_REQUEST['id'];
         $client_name    = $_REQUEST['client_name'];
         $client_phone   = $_REQUEST['client_phone'];
-        $client_pid     = $_REQUEST['client_pid'];
-        $client_addr    = $_REQUEST['client_addr'];
+        $client_sex     = $_REQUEST['client_sex'];
+        $start_proc    = $_REQUEST['start_proc'];
+        $end_proc    = $_REQUEST['end_proc'];
         $order_date     = $_REQUEST['order_date'];
-        $pay_total      = $_REQUEST['pay_total'] == '' ? 0 : $_REQUEST['pay_total'];
-        $avansi         = $_REQUEST['avansi'] == '' ? 0 : $_REQUEST['avansi'];
-        $avans_plus     = $_REQUEST['avans_plus'] == '' ? 0 : $_REQUEST['avans_plus'];
+        $client_comment      = $_REQUEST['client_comment'];
 
         $db->setQuery(" SELECT  COUNT(*) AS cc
                         FROM    orders
@@ -397,14 +396,14 @@ switch ($act){
             $db->setQuery("INSERT INTO orders SET
                                                 id = '$id',
                                                 user_id='$user_id',
-                                                datetime='$order_date',
+                                                datetime=NOW(),
+                                                write_date='$order_date',
                                                 client_name='$client_name',
-                                                client_addr='$client_addr',
+                                                comment='$client_comment',
                                                 client_phone='$client_phone',
-                                                client_pid='$client_pid',
-                                                total='$pay_total',
-                                                avansi='$avansi',
-                                                avans_plus='$avans_plus'");
+                                                client_sex='$client_sex',
+                                                start_proc='$start_proc',
+                                                end_proc='$end_proc'");
 
             $db->execQuery();
             $data['error'] = '';
@@ -412,14 +411,13 @@ switch ($act){
 
         else{
             $db->setQuery("UPDATE orders SET user_id='$user_id',
-                                                datetime='$order_date',
+                                                write_date='$order_date',
                                                 client_name='$client_name',
-                                                client_addr='$client_addr',
-                                                client_pid='$client_pid',
+                                                comment='$client_comment',
                                                 client_phone='$client_phone',
-                                                total='$pay_total',
-                                                avansi='$avansi',
-                                                avans_plus='$avans_plus'
+                                                client_sex='$client_sex',
+                                                start_proc='$start_proc',
+                                                end_proc='$end_proc'
                             WHERE id='$id'");
             $db->execQuery();
             $data['error'] = '';
@@ -830,15 +828,12 @@ switch ($act){
 
 
             $db->setQuery("SELECT 	orders.id,
-                                    orders.datetime,
+                                    orders.write_date,
                                     orders.client_name,
-                                    orders.client_pid,
+                                    sex.name,
                                     orders.client_phone,
-                                    orders.client_addr,
-                                    orders.total,
-                                    orders.avansi,
-                                    orders.avans_plus,
-                                    orders.total - (orders.avansi+orders.avans_plus) AS left_to_pay,
+                                    '' AS proced,
+                                    '' AS total_pay,
                                     CONCAT(order_status.name, 
                                     CASE
                                         WHEN orders.status_id = 1 THEN '<div class=\"red_dot\"></div>'
@@ -851,6 +846,7 @@ switch ($act){
                                         
                             FROM 	orders
                             JOIN	order_status ON order_status.id = orders.status_id
+                            JOIN    sex ON sex.id = orders.client_sex
                             WHERE 	orders.actived = 1");
 
 
@@ -904,27 +900,15 @@ switch ($act){
 
         $order_id = $_REQUEST['order_id'];
 
-        $db->setQuery(" SELECT  orders_product.id,
-                                products.name,
-                                GROUP_CONCAT(CONCAT('№-',products_glasses.id,' ',glass_options.name, ' - <span style=\"color:#000;',
-                                CASE
-                                    WHEN glass_status.id = 1 THEN 'background-color: red;'
-                                    WHEN glass_status.id = 2 THEN 'background-color: yellow;'
-                                    WHEN glass_status.id = 3 THEN 'background-color: green;'
-                                    WHEN glass_status.id = 4 THEN 'background-color: red;'
-                                    WHEN glass_status.id = 5 THEN 'background-color: red;'
-                                END
-                                ,'\">', glass_status.name,'</span>') SEPARATOR ',<br>') AS glasses,
-                                CONCAT('<a style=\"color:blue;\" target=\"_blank\" href=\"',IFNULL(orders_product.picture,0),'\">სურათის გახსნა</a>') AS picture,
-                                CONCAT('<a style=\"color:blue;\" class=\"product_detail\" data-id=\"',orders_product.id,'\" href=\"#\">დეტალურად</a>') AS detailed
-
-                        FROM    orders_product
-                        JOIN    products ON products.id = orders_product.product_id
-                        LEFT JOIN	products_glasses ON products_glasses.order_product_id = orders_product.id
-                        LEFT JOIN	glass_options ON glass_options.id = products_glasses.glass_option_id
-                        LEFT JOIN	glass_status ON glass_status.id = products_glasses.status_id
-                        WHERE   orders_product.order_id = '$order_id' AND orders_product.actived = 1
-                        GROUP BY orders_product.id");
+        $db->setQuery(" SELECT 	procedures.id,
+                                procedure_list.name,
+                                procedures.duration,
+                                CONCAT(users.firstname, ' ', users.lastname) AS client,
+                                procedures.price
+                        FROM 		procedures
+                        JOIN		procedure_list ON procedure_list.id = procedures.procedure_id
+                        JOIN		users ON users.id = procedures.user_id
+                        WHERE 	procedures.order_id = '$order_id'");
         $result = $db->getKendoList($columnCount, $cols);
 
         $data = $result;
@@ -1347,13 +1331,15 @@ function getPage($id, $res = ''){
         <legend>ინფორმაცია</legend>
         <div class="row">
             <div class="col-sm-3">
-                <label>დასახელება</label>
+                <label>სახელი გვარი</label>
                 <input value="'.$res['client_name'].'" data-nec="0" style="height: 18px; width: 95%;" type="text" id="client_name" class="idle" autocomplete="off">
             </div>
 
             <div class="col-sm-3">
-                <label>პირადი ნომერი</label>
-                <input value="'.$res['client_pid'].'" data-nec="0" style="height: 18px; width: 95%;" type="text" id="client_pid" class="idle" autocomplete="off">
+                <label>სქესი</label>
+                <select id="client_sex">
+                    '.getSex($res['client_sex']).'
+                </select>
             </div>
 
             <div class="col-sm-3">
@@ -1362,14 +1348,22 @@ function getPage($id, $res = ''){
             </div>
 
             <div class="col-sm-3">
-                <label>მისამართი</label>
-                <input value="'.$res['client_addr'].'" data-nec="0" style="height: 18px; width: 95%;" type="text" id="client_addr" class="idle" autocomplete="off">
-            </div>
-
-            <div class="col-sm-3">
                 <label>ჩაწერის თარიღი</label>
                 <input value="'.$res['datetime'].'" data-nec="0" style="height: 18px; width: 95%;" type="text" id="order_date" class="idle" autocomplete="off">
             </div>
+            <div class="col-sm-3">
+            <label>დაწყება - დასრულება</label>
+                <div class="row">
+                    <div class="col-sm-6"><input style="width:99%;" type="text" id="start_proc" value="'.$res['start_proc'].'"></div>
+                    <div class="col-sm-6"><input style="width:99%;" type="text" id="end_proc" value="'.$res['end_proc'].'"></div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <label>კომენტარი</label>
+                <textarea style="width:100%" id="client_comment">'.$res['comment'].'</textarea>
+            </div>
+
+            
 
             <div class="col-sm-12">---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------</div>
             <div class="col-sm-12">
@@ -1409,12 +1403,12 @@ function getWriting($id){
     $db->setQuery(" SELECT 	orders.id,
                             orders.datetime,
                             orders.client_name,
-                            orders.client_pid,
+                            orders.client_sex,
                             orders.client_phone,
-                            orders.client_addr,
-                            orders.total,
-                            orders.avansi,
-                            orders.avans_plus
+                            orders.start_proc,
+                            orders.end_proc,
+                            orders.status_id,
+                            orders.comment
                         
                             
                     FROM 	orders
@@ -1467,7 +1461,43 @@ function getPersonal($id){
     return $data;
 
 }
+function getSex($id){
+    GLOBAL $db;
 
+    $data = '';
+
+    $db->setQuery("SELECT   id,
+
+                            name AS 'name'
+
+                    FROM    sex
+
+                    WHERE   actived = 1");
+
+    $cats = $db->getResultArray();
+
+    foreach($cats['result'] AS $cat){
+
+        if($cat[id] == $id){
+
+            $data .= '<option value="'.$cat[id].'" selected="selected">'.$cat[name].'</option>';
+
+        }
+
+        else{
+
+            $data .= '<option value="'.$cat[id].'">'.$cat[name].'</option>';
+
+        }
+
+        
+
+    }
+
+
+
+    return $data;
+}
 function getStatuses($id){
 
     GLOBAL $db;

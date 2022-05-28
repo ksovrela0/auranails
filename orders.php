@@ -364,8 +364,8 @@
 	
 	<div class="main-navbar-backdrop"></div>
 	
-	<div title="შეკვეთა" id="get_edit_page"></div>
-	<div title="შეკვეთა - პროდუქტი" id="get_product_page"></div>
+	<div title="ჩაწერა" id="get_edit_page"></div>
+	<div title="ჩაწერა - პროცედურა" id="get_product_page"></div>
 	<div title="შეკვეთა - პროდუქტი - მინები" id="get_glass_page"></div>
 	<div title="SMS ყველასთან" id="sms_to_all_div"></div>
 	<div title="SMS მონიშნულებთან" id="sms_to_checked_div"></div>
@@ -446,12 +446,12 @@
 				//KendoUI CLASS CONFIGS BEGIN
 				var aJaxURL = "server-side/writes.action.php";
 				var gridName = 'main_div';
-				var actions = '<div id="new_writing">ახალი შეკვეთა</div><div id="copy_writing">შეკვეთის კოპირება</div><div id="del_writing">შეკვეთის წაშლა</div>';
+				var actions = '<div id="new_writing">ახალი ჩაწერა</div><div id="copy_writing">ჩაწერის კოპირება</div><div id="del_writing">ჩაწერის წაშლა</div>';
 				var editType = "popup"; // Two types "popup" and "inline"
 				var itemPerPage = 100;
 				var columnsCount = 8;
 				var columnsSQL = ["id:string", "datetime:string", "client:string", "client_id:string", "client_phone:string", "client_addr:string", "total_to_pay:string", "status:string"];
-				var columnGeoNames = ["ID", "შეკვ.თარიღ", "დასახელება", "პირადი ნომერი", "ტელეფონი", "პროცედურები", "სულ გადასახდელი", "სტატუსი"];
+				var columnGeoNames = ["ID", "ჩაწ.თარიღ", "სახელი/გვარი", "სქესი", "ტელეფონი", "პროცედურები", "სულ გადასახდელი", "სტატუსი"];
 				var showOperatorsByColumns = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 				var selectors = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 				var locked = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -471,7 +471,7 @@
 				var itemPerPage = 100;
 				var columnsCount = 5;
 				var columnsSQL = ["id2:string", "name_product:string", "glass_count:string", "picture:string", "action:string"];
-				var columnGeoNames = ["ID", "დასახელება", "მინების რ-ბა", "სურათი", "ქმედება"];
+				var columnGeoNames = ["ID", "დასახელება", "ხანგძლივობა", "შემსრულებელი", "ფასი"];
 				var showOperatorsByColumns = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 				var selectors = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 				var locked = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -634,8 +634,9 @@
 					dataType: "json",
 					success: function(data) {
 						$('#get_edit_page').html(data.page);
-						$("#personal,#statuses,#cabinet").chosen();
-						$("#order_date").timepicker({
+						$("#personal,#statuses,#cabinet,#client_sex").chosen();
+						GetDate("order_date");
+						$("#start_proc,#end_proc").timepicker({
 							uiLibrary: 'bootstrap4'
 						});
 						/* $(document).on('click', '#sex_set label', function() {
@@ -926,10 +927,10 @@
 					dataType: "json",
 					success: function(data) {
 						$('#get_edit_page').html(data.page);
-						$("#personal,#statuses,#cabinet").chosen();
-						$("#order_date").datetimepicker({
-							dateFormat: "yy-mm-dd",
-							timeFormat: "HH:mm:ss"
+						$("#personal,#statuses,#cabinet,#client_sex").chosen();
+						GetDate("order_date");
+						$("#start_proc,#end_proc").timepicker({
+							uiLibrary: 'bootstrap4'
 						});
 						var kendo = new kendoUI();
 						/* var sex_id = $("input[name='sex_id']:checked").val();
@@ -1103,13 +1104,12 @@
 				params.act = 'save_order';
 				params.id = $("#writing_id").val();
 				params.client_name = $("#client_name").val();
-				params.client_pid = $("#client_pid").val();
+				params.client_sex = $("#client_sex").val();
 				params.client_phone = $("#client_phone").val();
-				params.client_addr = $("#client_addr").val();
 				params.order_date = $("#order_date").val();
-				params.pay_total = $("#pay_total").val();
-				params.avansi = $("#avansi").val();
-				params.avans_plus = $("#avans_plus").val();
+				params.start_proc = $("#start_proc").val();
+				params.end_proc = $("#end_proc").val();
+				params.client_comment = $("#client_comment").val();
 
 				var ready_to_save = 0;
 				if(params.client_name == '') {
@@ -1118,14 +1118,6 @@
 				}
 				if(params.client_phone == '') {
 					alert('შეიყვანეთ კლიენტის ნომერი');
-					ready_to_save++;
-				}
-				if(params.client_addr == '') {
-					alert('შეიყვანეთ კლიენტის მისამართი');
-					ready_to_save++;
-				}
-				if(params.client_pid == '') {
-					alert('შეიყვანეთ კლიენტის პირადი ნომერი');
 					ready_to_save++;
 				}
 
