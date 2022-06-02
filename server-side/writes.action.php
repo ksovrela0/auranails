@@ -901,14 +901,16 @@ switch ($act){
         $order_id = $_REQUEST['order_id'];
 
         $db->setQuery(" SELECT 	procedures.id,
-                                procedure_list.name,
-                                procedures.duration,
+                                `procedure`.name,
+                                `procedure`.duration,
                                 CONCAT(users.firstname, ' ', users.lastname) AS client,
                                 procedures.price
                         FROM 		procedures
-                        JOIN		procedure_list ON procedure_list.id = procedures.procedure_id
+                        JOIN		`procedure` ON `procedure`.id = procedures.procedure_id
+                        JOIN        procedure_personal ON procedure_personal.procedure_id = `procedure`.id
                         JOIN		users ON users.id = procedures.user_id
-                        WHERE 	procedures.order_id = '$order_id'");
+                        WHERE 	procedures.order_id = '$order_id'
+                        GROUP BY procedures.id");
         $result = $db->getKendoList($columnCount, $cols);
 
         $data = $result;
@@ -1351,7 +1353,7 @@ function getPage($id, $res = ''){
                 <label>ჩაწერის თარიღი</label>
                 <input value="'.$res['datetime'].'" data-nec="0" style="height: 18px; width: 95%;" type="text" id="order_date" class="idle" autocomplete="off">
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-3" style="display:none;">
             <label>დაწყება - დასრულება</label>
                 <div class="row">
                     <div class="col-sm-6"><input style="width:99%;" type="text" id="start_proc" value="'.$res['start_proc'].'"></div>
