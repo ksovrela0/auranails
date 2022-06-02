@@ -50,6 +50,14 @@ switch ($act){
         $data = array('page' => getPage());
 
     break;
+    case 'get_procedure_data':
+        $id = $_REQUEST['id'];
+        $db->setQuery(" SELECT *
+                        FROM `procedure`
+                        WHERE actived = 1  AND id = '$id'");
+
+        $data = $db->getResultArray()['result'][0];
+        break;
     case 'check_login':
         $login = $_REQUEST['login'];
         $pass = $_REQUEST['password'];
@@ -107,12 +115,12 @@ switch ($act){
     case 'get_product_page':
         $id = $_REQUEST['id'];
         if($id == '' OR !isset($_REQUEST['id'])){
-            $db->setQuery("INSERT INTO orders_product SET picture = 1");
+            $db->setQuery("INSERT INTO procedures SET user_id = 1");
             $db->execQuery();
 
             $id = $db->getLastId();
 
-            $db->setQuery("DELETE FROM orders_product WHERE id='$id'");
+            $db->setQuery("DELETE FROM procedures WHERE id='$id'");
             $db->execQuery();
         }
         
@@ -900,17 +908,16 @@ switch ($act){
 
         $order_id = $_REQUEST['order_id'];
 
-        $db->setQuery(" SELECT 	procedures.id,
+        $db->setQuery("SELECT	procedures.id,
                                 `procedure`.name,
                                 `procedure`.duration,
-                                CONCAT(users.firstname, ' ', users.lastname) AS client,
+                                CONCAT(personal.name, ' ', personal.lastname) AS name,
                                 procedures.price
+
                         FROM 		procedures
                         JOIN		`procedure` ON `procedure`.id = procedures.procedure_id
-                        JOIN        procedure_personal ON procedure_personal.procedure_id = `procedure`.id
-                        JOIN		users ON users.id = procedures.user_id
-                        WHERE 	procedures.order_id = '$order_id'
-                        GROUP BY procedures.id");
+                        JOIN		personal ON personal.id = procedures.user_id
+                        WHERE 	procedures.actived = 1 AND procedures.order_id = '$order_id'");
         $result = $db->getKendoList($columnCount, $cols);
 
         $data = $result;
@@ -1151,9 +1158,14 @@ function getProduct($id){
     GLOBAL $db;
 
     $db->setQuery(" SELECT  id,
-                            product_id AS product_cat_id,
-                            picture
-                    FROM    orders_product
+                            procedure_id,
+                            duration,
+                            price,
+                            salary_fix,
+                            salary_percent,
+                            comment,
+                            user_id
+                    FROM    procedures
                     WHERE   id = '$id'");
 
     $result = $db->getResultArray();
@@ -1169,24 +1181,43 @@ function getProductPage($id, $res = ''){
     $data = '   <fieldset class="fieldset">
                     <legend>ინფორმაცია</legend>
                         <div class="row">
-                            <div class="col-sm-6">
-                                <label>აირჩიეთ პროდუქცია</label>
-                                <select id="selected_product_id">
-                                    '.getProductOptions($res['product_cat_id']).'
+                            <div class="col-sm-4">
+                                <label>აირჩიეთ პროცედურა</label>
+                                <select id="procedure_cat">
+                                    '.getProductOptions($res['procedure_id']).'
                                 </select>
                             </div>
-                            <div class="col-sm-6">
-                                <label>აირჩიეთ სურათი</label>
-                                <input type="file">
+                            <div class="col-sm-4">
+                                <label>ხანგძლივობა</label>
+                                <input value="'.$res['duration'].'" data-nec="0" style="height: 18px; width: 95%;" type="text" id="duration" class="idle" autocomplete="off">
                             </div>
-                            <div style="margin-top: 16px;" class="col-sm-12">
-                                <div id="glasses_div"></div>
+
+                            <div class="col-sm-4">
+                                <label>ფასი</label>
+                                <input value="'.$res['price'].'" data-nec="0" style="height: 18px; width: 95%;" type="text" id="price" class="idle" autocomplete="off">
+                            </div>
+
+                            <div class="col-sm-4">
+                                <label>ხელფასი ფიქსირებული</label>
+                                <input value="'.$res['salary_fix'].'" data-nec="0" style="height: 18px; width: 95%;" type="text" id="salary_fix" class="idle" autocomplete="off">
+                            </div>
+
+                            <div class="col-sm-4">
+                                <label>ხელფასი %</label>
+                                <input value="'.$res['salary_percent'].'" data-nec="0" style="height: 18px; width: 95%;" type="text" id="salary_percent" class="idle" autocomplete="off">
+                            </div>
+
+                            <div class="col-sm-4">
+                                <label>აირჩიეთ შემსრულებელი</label>
+                                <select id="personal_id">
+                                    '.getPersonalData($res['user_id']).'
+                                </select>
                             </div>
                         </div>
                     </legend>
                 </fieldset>
 
-                <input type="hidden" id="product_id" value="'.$id.'">
+                <input type="hidden" id="procedure_id" value="'.$id.'">
 
                 ';
 
@@ -1288,9 +1319,29 @@ function getProductOptions($id){
     $data = '';
     $db->setQuery("SELECT   id,
                             name AS 'name'
-                    FROM    products 
+                    FROM    `procedure` 
                     WHERE actived = 1");
     $cats = $db->getResultArray();
+    $data .= '<option value="0">აირჩიეთ</option>';
+    foreach($cats['result'] AS $cat){
+        if($cat[id] == $id){
+            $data .= '<option value="'.$cat[id].'" selected="selected">'.$cat[name].'</option>';
+        }
+        else{
+            $data .= '<option value="'.$cat[id].'">'.$cat[name].'</option>';
+        }
+    }
+    return $data;
+}
+function getPersonalData($id){
+    GLOBAL $db;
+    $data = '';
+    $db->setQuery("SELECT   id,
+                            CONCAT(name, ' ', lastname) AS 'name'
+                    FROM    `personal` 
+                    WHERE actived = 1");
+    $cats = $db->getResultArray();
+    $data .= '<option value="0">აირჩიეთ</option>';
     foreach($cats['result'] AS $cat){
         if($cat[id] == $id){
             $data .= '<option value="'.$cat[id].'" selected="selected">'.$cat[name].'</option>';

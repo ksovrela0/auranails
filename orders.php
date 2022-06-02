@@ -683,23 +683,41 @@
 					success: function(data) {
 						$('#get_product_page').html(data.page);
 						var kendo = new kendoUI();
-						var pr = "&product_id="+$("#product_id").val();
-						LoadKendoTable_glass(pr);
-						$("#selected_product_id").chosen();
+						$("#procedure_cat,#personal_id").chosen();
+						$("#duration").timepicker({
+							uiLibrary: 'bootstrap4'
+						});
 						$("#get_product_page").dialog({
 							resizable: false,
-							height: "auto",
+							height: 400,
 							width: 1100,
 							modal: true,
 							buttons: {
 								"შენახვა": function() {
-									save_product();
+									//save_product();
 								},
 								'დახურვა': function() {
 									$(this).dialog("close");
 								}
 							}
 						});
+					}
+				});
+			});
+			$(document).on("change", "#procedure_cat", function(){
+				$.ajax({
+					url: "server-side/writes.action.php",
+					type: "POST",
+					data: {
+						act: "get_procedure_data",
+						id: $("#procedure_cat").val()
+					},
+					dataType: "json",
+					success: function(data) {
+						$("#duration").val(data.duration);
+						$("#price").val(data.price);
+						$("#salary_fix").val(0);
+						$("#salary_percent").val(50);
 					}
 				});
 			});
@@ -1025,18 +1043,18 @@
 					dataType: "json",
 					success: function(data) {
 						$('#get_product_page').html(data.page);
-						var kendo = new kendoUI();
-						var pr = "&product_id="+dItem.id2;
-						LoadKendoTable_glass(pr);
-						$("#selected_product_id").chosen();
+						$("#procedure_cat,#personal_id").chosen();
+						$("#duration").timepicker({
+							uiLibrary: 'bootstrap4'
+						});
 						$("#get_product_page").dialog({
 							resizable: false,
-							height: "auto",
+							height: 400,
 							width: 1100,
 							modal: true,
 							buttons: {
 								"შენახვა": function() {
-									save_product();
+									//save_product();
 								},
 								'დახურვა': function() {
 									$(this).dialog("close");
