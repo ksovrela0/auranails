@@ -192,10 +192,10 @@
 				<!-- Page Header -->
 				<div class="page-header">
 					<div>
-						<h2 class="main-content-title tx-24 mg-b-5">პერსონალი</h2>
+						<h2 class="main-content-title tx-24 mg-b-5">პროცედურები</h2>
 						<ol class="breadcrumb">
-							<li class="breadcrumb-item"><a href="#">პერსონალის მართვგა</a></li>
-							<li class="breadcrumb-item active" aria-current="page">პერსონალი</li>
+							<li class="breadcrumb-item"><a href="#">პროცედურების მართვგა</a></li>
+							<li class="breadcrumb-item active" aria-current="page">პროცედურები</li>
 						</ol>
 					</div>
 				</div>
@@ -293,11 +293,11 @@
 	<!-- Jquery js-->
 	
 	<div class="main-navbar-backdrop"></div>
-	<div title="პერსონალი" id="get_edit_page">
+	<div title="პროცედურა" id="get_edit_page">
 		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>These items will be permanently deleted and cannot be recovered. Are you sure?</p>
 	</div>
 	<script>
-	var aJaxURL = "server-side/personal.action.php";
+	var aJaxURL = "server-side/procedure.action.php";
 	$(document).on("dblclick", "#product_categories tr.k-state-selected", function () {
 		var grid = $("#product_categories").data("kendoGrid");
 		var dItem = grid.dataItem($(this));
@@ -318,8 +318,8 @@
 				$('#get_edit_page').html(data.page);
                 $("#poduct_category").chosen();
                 var kendo = new kendoUI();
-				kendo.kendoMultiSelector('grafik', 'server-side/personal.action.php', 'get_week_day', "აირჩით დღეები", data.selectedZones);
-				$("#work_start,#work_end").timepicker({
+				kendo.kendoMultiSelector('personal', 'server-side/procedure.action.php', 'get_personal', "აირჩით თანამშრომლები", data.selectedZones);
+				$("#duration").timepicker({
 					uiLibrary: 'bootstrap4'
 				});
 				$("#get_edit_page").dialog({
@@ -351,8 +351,8 @@
 				$('#get_edit_page').html(data.page);
 				$("#poduct_category").chosen();
 				var kendo = new kendoUI();
-				kendo.kendoMultiSelector('grafik', 'server-side/personal.action.php', 'get_week_day', "აირჩით დღეები", data.selectedZones);
-				$("#work_start,#work_end").timepicker({
+				kendo.kendoMultiSelector('personal', 'server-side/procedure.action.php', 'get_personal', "აირჩით თანამშრომლები", data.selectedZones);
+				$("#duration").timepicker({
 					uiLibrary: 'bootstrap4'
 				});
 				$("#get_edit_page").dialog({
@@ -435,7 +435,7 @@
 	function LoadKendoTable_incomming(hidden){
 
 		//KendoUI CLASS CONFIGS BEGIN
-		var aJaxURL	        =   "server-side/personal.action.php";
+		var aJaxURL	        =   "server-side/procedure.action.php";
 		var gridName        = 	'product_categories';
 		var actions         = 	'<div class="btn btn-list"><a id="button_add" style="color:white;" class="btn ripple btn-primary"><i class="fas fa-plus-square"></i> დამატება</a><a id="button_trash" style="color:white;" class="btn ripple btn-primary"><i class="fas fa-trash"></i> გამორთვა</a></div>';
 		var editType        =   "popup"; // Two types "popup" and "inline"
@@ -451,10 +451,10 @@
 								];
 		var columnGeoNames  = 	[
 									"ID", 
-									"სახელი გვარი",
-									"ტელეფონი",
-									"სამუშაო გრაფიკი",
-                                    "პერსონალის ხელფასი"
+									"პროცედურა",
+									"ფასი",
+									"ხანგძლივობა",
+                                    "მომსახურე პერსონალი"
 								];
 
 		var showOperatorsByColumns  =   [0,0,0,0,0,0,0,0,0,0]; 
@@ -631,18 +631,15 @@
 	function save_personal(){
 		let params 			= new Object;
 		params.act 			= 'save_personal';
-		params.id 			= $("#personal_id").val();
-		params.firstname 	= $("#firstname").val();
-		params.lastname 	= $("#lastname").val();
-		params.phone		= $("#phone").val();
-		params.salary 		= $("#salary").val();
-		params.work_start 	= $("#work_start").val();
-		params.work_end 	= $("#work_end").val();
-		
-		var grafik = [];
-		$('#grafik option:selected').toArray().map(c => grafik.push(c.value));
+		params.id 			= $("#procedure_id").val();
+		params.name 	    = $("#proc_name").val();
+		params.price 	    = $("#price").val();
+		params.duration		= $("#duration").val();
 
-		params.grafik 	= $("#grafik").val();
+		var personal = [];
+		$('#personal option:selected').toArray().map(c => personal.push(c.value));
+
+		params.personal 	= $("#personal").val();
 		$.ajax({
 			url: aJaxURL,
 			type: "POST",

@@ -316,7 +316,13 @@ class kendoUI{
 		});
 	}
 
-	kendoMultiSelector(selectorName, url, action, title){
+	kendoMultiSelector(selectorName, url, action, title, value = 0){
+		var preSelected = [];
+		if(value != 0 && value != '' && value != null){
+			preSelected = value.split(',');
+
+			console.log(preSelected);
+		}
 		$("#"+selectorName).kendoMultiSelect({
 			
 			placeholder: title,
@@ -344,6 +350,7 @@ class kendoUI{
 					}
 				}
 			}),
+			value: preSelected,
 			height: 300
 		});
 	}
