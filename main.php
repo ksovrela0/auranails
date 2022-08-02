@@ -526,7 +526,7 @@
                </div>
                
                <!-- End Row --> <!-- Row--> 
-               <div class="row">
+               <div class="row" style="display:none;">
                   <div class="col-sm-12 col-xl-12 col-lg-12">
                      <div class="card custom-card">
                         <div class="card-body">
@@ -582,7 +582,7 @@
                      </div>
                   </div>
                </div>
-               <div class="row">
+               <div class="row" style="display:none;">
                   <div class="col-sm-12 col-xl-12 col-lg-12">
                      <div class="card custom-card">
                         <div class="card-body">

@@ -50,6 +50,12 @@ switch ($act){
         $data = array('page' => getPage());
 
     break;
+    case 'get_personal_interest':
+        $id = $_REQUEST['id'];
+        $db->setQuery("SELECT salary FROM personal WHERE id = '$id' AND actived = 1");
+
+        $data['salary'] = $db->getResultArray()['result'][0]['salary'];
+        break;
     case 'get_procedure_data':
         $id = $_REQUEST['id'];
         $db->setQuery(" SELECT *
@@ -578,7 +584,7 @@ switch ($act){
 
 
             foreach($ids AS $id){
-                $db->setQuery("UPDATE orders_product SET actived = 0 WHERE id = '$id'");
+                $db->setQuery("UPDATE procedures SET actived = 0 WHERE id = '$id'");
                 $db->execQuery();
     
             }
@@ -1188,6 +1194,12 @@ function getProductPage($id, $res = ''){
                                 </select>
                             </div>
                             <div class="col-sm-4">
+                                <label>აირჩიეთ შემსრულებელი</label>
+                                <select id="personal_id">
+                                    '.getPersonalData($res['user_id']).'
+                                </select>
+                            </div>
+                            <div class="col-sm-4">
                                 <label>ხანგძლივობა</label>
                                 <input value="'.$res['duration'].'" data-nec="0" style="height: 18px; width: 95%;" type="text" id="duration" class="idle" autocomplete="off">
                             </div>
@@ -1198,21 +1210,11 @@ function getProductPage($id, $res = ''){
                             </div>
 
                             <div class="col-sm-4">
-                                <label>ხელფასი ფიქსირებული</label>
-                                <input value="'.$res['salary_fix'].'" data-nec="0" style="height: 18px; width: 95%;" type="text" id="salary_fix" class="idle" autocomplete="off">
-                            </div>
-
-                            <div class="col-sm-4">
                                 <label>ხელფასი %</label>
                                 <input value="'.$res['salary_percent'].'" data-nec="0" style="height: 18px; width: 95%;" type="text" id="salary_percent" class="idle" autocomplete="off">
                             </div>
 
-                            <div class="col-sm-4">
-                                <label>აირჩიეთ შემსრულებელი</label>
-                                <select id="personal_id">
-                                    '.getPersonalData($res['user_id']).'
-                                </select>
-                            </div>
+                            
                         </div>
                     </legend>
                 </fieldset>

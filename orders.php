@@ -717,7 +717,7 @@
 						$("#duration").val(data.duration);
 						$("#price").val(data.price);
 						$("#salary_fix").val(0);
-						$("#salary_percent").val(50);
+
 					}
 				});
 			});
@@ -1238,6 +1238,20 @@
 					});
 				}
 			}
+			$(document).on('change', '#personal_id', function(){
+				$.ajax({
+					url: "server-side/writes.action.php",
+					type: "POST",
+					data: {
+						act: "get_personal_interest",
+						id: $(this).val()
+					},
+					dataType: "json",
+					success: function(data) {
+						$("#salary_percent").val(data.salary);
+					}
+				});
+			});
 			</script>
 </body>
 
