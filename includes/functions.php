@@ -14,6 +14,8 @@
 <link href="assets/css/skins.css" rel="stylesheet">
 <link href="assets/css/dark-style.css" rel="stylesheet">
 <link href="assets/css/custom-dark-style.css" rel="stylesheet">
+
+<link href="assets/css/jquery.datetimepicker.min.css" rel="stylesheet">
 <!---Select2 css-->
 <link href="assets/plugins/select2/css/select2.min.css" rel="stylesheet">
 <!---Sidebar css-->
@@ -158,5 +160,8 @@
 <script type="text/javascript" language="javascript" src="assets/js/kendoUI/kendo.all.min.js"></script>
 <script type="text/javascript" language="javascript" src="assets/js/kendoUI/kendo.main.class.js"></script>
 <script type="text/javascript" language="javascript" src="assets/js/kendoUI/pako_deflate.min.js"></script>  
+
 <script type="text/javascript" language="javascript" src="assets/js/timepicker.js"></script>
+
+<script type="text/javascript" language="javascript" src="assets/js/jquery.datetimepicker.full.min.js"></script> 
 

@@ -635,10 +635,7 @@
 					success: function(data) {
 						$('#get_edit_page').html(data.page);
 						$("#personal,#statuses,#cabinet,#client_sex").chosen();
-						GetDate("order_date");
-						$("#start_proc,#end_proc").timepicker({
-							uiLibrary: 'bootstrap4'
-						});
+						$("#order_date").datetimepicker();
 						/* $(document).on('click', '#sex_set label', function() {
 							var sex_id = $(this).prev().val();
 							var kendo = new kendoUI();
