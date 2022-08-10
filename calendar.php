@@ -228,6 +228,7 @@
 		.left_table_vert{
 			width: 60px;
 			height: 30px;
+			position:relative;
 		}
 		.time_header{
 			height: 30px;
@@ -301,7 +302,23 @@
 			-webkit-box-shadow: 7px 8px 8px 2px rgba(0,0,0,0.36);
 			-moz-box-shadow: 7px 8px 8px 2px rgba(0,0,0,0.36);
 		}
-		.order_detail p{
+
+		.order_detail_left{
+			position: absolute;
+			z-index: 99999;
+			background-color: #fff;
+			width: 260px;
+			display: none;
+			padding: 8px;
+			border-radius: 12px;
+			border: 1px solid #0000002b;
+			box-shadow: 7px 8px 8px 2px rgba(0,0,0,0.36);
+			-webkit-box-shadow: 7px 8px 8px 2px rgba(0,0,0,0.36);
+			-moz-box-shadow: 7px 8px 8px 2px rgba(0,0,0,0.36);
+			top: 0px;
+    		left: 180px;
+		}
+		.order_detail p, .order_detail_left p{
 			margin-bottom: 4px;
 			font-size: 14px;
 		}
@@ -498,7 +515,7 @@
 
 				let colspan = 4;
 				let step_minute = 15;
-				let width_step = 30;
+				let height_step = 30;
 
 				$.ajax({
 					url: "server-side/calendar.action.php",
@@ -525,6 +542,36 @@
 						})
 
 						console.log(pers_procedures)
+
+						pers_procedures.forEach(function(j, x){
+							j.forEach(function(u,t){
+								
+								let hour = u.start_proc.split(':')[0];
+								let minute = u.start_proc.split(':')[1];
+
+								console.log(x,hour,minute)
+								if(minute == '00'){
+									minute = 0;
+								}
+
+								let height = (u.duration/step_minute)*height_step;
+
+								$(".time_block[personal-id='"+x+"'][hour='"+hour+"'][minute='"+minute+"']").html(	`<div sort="`+u.procedure_id+`" style="width:100%;height: `+height+`px;" class="write_block">
+																														<span>`+u.client_name+` `+u.client_phone+`</span>
+																													</div>
+																													<div sort="`+u.procedure_id+`" class="order_detail_left">
+																														<p><b>პერსონალი:</b> `+u.client_name+`</p>
+																														<p><b>კლიენტი:</b> `+u.client_name+`</p>
+																														<p><b>ტელეფონი:</b> `+u.client_phone+`</p>
+																														<p><b>პროცედურა:</b> `+u.proc_name+`</p>
+																														<p><b>ხანგძლივობა:</b> `+u.duration+` წუთი</p>
+																														<p><b>დრო:</b> `+u.start_proc+`-`+u.end_proc+`</p>
+																														<p><b>ფასი:</b> `+u.price+` GEL</p>
+																													</div>`)
+							})
+							
+							//<div style="width: 270px;" class="write_block">ჩაწერა ლაშა ტოროლა</div>
+						});
 
 
 					}
@@ -663,11 +710,13 @@
 			let sort = $(this).attr('sort');
 
 			$(".order_detail[sort='"+sort+"']").css('display','block')
+			$(".order_detail_left[sort='"+sort+"']").css('display','block')
 		})
 		$(document).on('mouseleave', '.write_block', function(){
 			let sort = $(this).attr('sort');
 
 			$(".order_detail[sort='"+sort+"']").css('display','none')
+			$(".order_detail_left[sort='"+sort+"']").css('display','none')
 		})
 
 
