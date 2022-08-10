@@ -512,12 +512,19 @@
 
 						let user_count = data.length;
 						let personal_ids = [];
+						
+						let pers_procedures = [];
 						data.forEach(function(i, x){
 							$(".top_header").append(`<td  personal-id="`+i.id+`" class="vertical_td">`+i.name+`</td>`)
 							personal_ids.push(i.id);
+							pers_procedures[i.id] = i.procedures;
+							if(x == user_count-1){
+								$(".calendar_table").append(generateTDVertical(4, user_count));
+							}
+
 						})
 
-						$(".calendar_table").append(generateTDVertical(4,personal_ids, user_count));
+						console.log(pers_procedures)
 
 
 					}
@@ -599,8 +606,7 @@
 			
 		});
 
-		function generateTDVertical(colspan = 4, personal_ids, user_count){
-			console.log(personal_ids)
+		function generateTDVertical(colspan = 4, user_count){
 			let html;
 			let start_hour = 9;
 			for(let i = 0; i<13; i++){
@@ -617,11 +623,12 @@
 							html += `<td rowspan="4">`+start_hour+`:00</td>`
 						}
 						else{
-							let child = k+2;
+							let child = user_index+2;
 							let personal_id = $(".top_header td:nth-child("+child+")").attr('personal-id')
-							html += `<td child_nth="4444`+user_index+`" hour="`+start_hour+`" minute="`+start_minute+`" class="time_block left_table_vert"></td>`
+							html += `<td personal-id="`+personal_id+`" hour="`+start_hour+`" minute="`+start_minute+`" class="time_block left_table_vert"></td>`
+							user_index++;
 						}
-						user_index++;
+						
 					}
 					html += `</tr>`;
 					start_minute = start_minute+15;
