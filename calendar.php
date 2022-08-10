@@ -248,13 +248,13 @@
 		.data-table{
     		overflow-x: scroll;
 			height: 79vh;
-			padding: 10px;
+			padding: 10px 2px;
 		}
 
 		.data-table0{
 			height: 79vh;
 			overflow: hidden;
-			padding: 10px;
+			padding: 10px 2px;
 		}
 		
 		.block_table{
