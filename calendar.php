@@ -213,7 +213,7 @@
 		}
 		.calendar_table{
 			width: 100%;
-
+			table-layout: fixed;
 		}
 		.time_block_container{
 			display: flex;
@@ -222,6 +222,11 @@
 		}
 		.time_block, .left_table{
 			width: 30px;
+			height: 30px;
+		}
+
+		.left_table_vert{
+			width: 60px;
 			height: 30px;
 		}
 		.time_header{
@@ -300,6 +305,12 @@
 			margin-bottom: 4px;
 			font-size: 14px;
 		}
+
+
+
+		.vertical_td{
+			width: 180px;
+		}
 	</style>
 	<!--[if gte IE 5]><frame></frame><![endif]-->
 	<script src="file:///C:/Users/giorgi/AppData/Local/Temp/Rar$EXa10780.17568/www.spruko.com/demo/dashlead/assets/plugins/ionicons/ionicons/ionicons.z18qlu2u.js" data-resources-url="file:///C:/Users/giorgi/AppData/Local/Temp/Rar$EXa10780.17568/www.spruko.com/demo/dashlead/assets/plugins/ionicons/ionicons/" data-namespace="ionicons"></script>
@@ -341,10 +352,18 @@
 							<input id="cal_date">
 						</div>
 					</div>
-					<div class="row">
+
+					<div class="data-table-vert col-md-12">
+						<table class="calendar_table" border="1">
+							<tr class="top_header">
+								<td class="left_table_vert">დრო</td>
+							</tr>
+						</table>
+					</div>
+					<!-- <div class="row">
 							<div class="data-table0 col-md-3">
 								<table class="calendar_table" border="1">
-									<tr>
+									<tr class="top_header">
 										<td class="left_table">თანამშრომლები</td>
 									</tr>
 								</table>
@@ -356,7 +375,7 @@
 									
 								</table>
 							</div>
-					</div>
+					</div> -->
 				</div>
 				<!-- End Row -->
 			</div>
@@ -458,6 +477,9 @@
 	</div>
 	<script>
 		$(document).ready(function(){
+
+			let calendar_type = 'vertical'
+
 			var today = new Date();
 			var dd = today.getDate();
 
@@ -472,76 +494,144 @@
 				format:'Y-m-d',
 			});
 
-			let colspan = 4;
-			let step_minute = 15;
-			let width_step = 30;
+			if (calendar_type == 'vertical'){
 
-			$(".block_table").append(`	<tr>
-											<td class="time_header" colspan="`+colspan+`">09:00</td>
-											<td class="time_header" colspan="`+colspan+`">10:00</td>
-											<td class="time_header" colspan="`+colspan+`">11:00</td>
-											<td class="time_header" colspan="`+colspan+`">12:00</td>
-											<td class="time_header" colspan="`+colspan+`">13:00</td>
-											<td class="time_header" colspan="`+colspan+`">14:00</td>
-											<td class="time_header" colspan="`+colspan+`">15:00</td>
-											<td class="time_header" colspan="`+colspan+`">16:00</td>
-											<td class="time_header" colspan="`+colspan+`">17:00</td>
-											<td class="time_header" colspan="`+colspan+`">18:00</td>
-											<td class="time_header" colspan="`+colspan+`">19:00</td>
-											<td class="time_header" colspan="`+colspan+`">20:00</td>
-											<td class="time_header" colspan="`+colspan+`">21:00</td>
-										</tr>`)
-			
+				let colspan = 4;
+				let step_minute = 15;
+				let width_step = 30;
 
-			//asda
-			$.ajax({
-				url: "server-side/calendar.action.php",
-				type: "POST",
-				data: {
-					act: "get_cal_data",
-					date: $('#cal_date').val()
-				},
-				dataType: "json",
-				success: function(data) {
-					data.forEach(function(i, x){
-						$(".calendar_table").append(`	<tr>
-															<td personal-id="`+i.id+`" class="left_table">`+i.name+`</td>
-														</tr>`)
+				$.ajax({
+					url: "server-side/calendar.action.php",
+					type: "POST",
+					data: {
+						act: "get_cal_data",
+						date: $('#cal_date').val()
+					},
+					dataType: "json",
+					success: function(data) {
 
-						$(".block_table").append(generateTD(colspan, i.id));
+						let user_count = data.length;
+						let personal_ids = [];
+						data.forEach(function(i, x){
+							$(".top_header").append(`<td  personal-id="`+i.id+`" class="vertical_td">`+i.name+`</td>`)
+							personal_ids.push(i.id);
+						})
 
-						let procedures = i.procedures;
-						console.log(procedures)
-						procedures.forEach(function(j, x){
+						$(".calendar_table").append(generateTDVertical(4,personal_ids, user_count));
+
+
+					}
+				});
+				
+			}
+			else if(calendar_type == 'horizontal'){
+				let colspan = 4;
+				let step_minute = 15;
+				let width_step = 30;
+
+				$(".block_table").append(`	<tr>
+												<td class="time_header" colspan="`+colspan+`">09:00</td>
+												<td class="time_header" colspan="`+colspan+`">10:00</td>
+												<td class="time_header" colspan="`+colspan+`">11:00</td>
+												<td class="time_header" colspan="`+colspan+`">12:00</td>
+												<td class="time_header" colspan="`+colspan+`">13:00</td>
+												<td class="time_header" colspan="`+colspan+`">14:00</td>
+												<td class="time_header" colspan="`+colspan+`">15:00</td>
+												<td class="time_header" colspan="`+colspan+`">16:00</td>
+												<td class="time_header" colspan="`+colspan+`">17:00</td>
+												<td class="time_header" colspan="`+colspan+`">18:00</td>
+												<td class="time_header" colspan="`+colspan+`">19:00</td>
+												<td class="time_header" colspan="`+colspan+`">20:00</td>
+												<td class="time_header" colspan="`+colspan+`">21:00</td>
+											</tr>`)
+				
+
+				//asda
+				$.ajax({
+					url: "server-side/calendar.action.php",
+					type: "POST",
+					data: {
+						act: "get_cal_data",
+						date: $('#cal_date').val()
+					},
+					dataType: "json",
+					success: function(data) {
+						data.forEach(function(i, x){
+							$(".calendar_table").append(`	<tr>
+																<td personal-id="`+i.id+`" class="left_table">`+i.name+`</td>
+															</tr>`)
+
+							$(".block_table").append(generateTD(colspan, i.id));
+
+							let procedures = i.procedures;
+							console.log(procedures)
+							procedures.forEach(function(j, x){
+								
+								let hour = j.start_proc.split(':')[0];
+								let minute = j.start_proc.split(':')[1];
+								if(minute == '00'){
+									minute = 0;
+								}
+
+								let width = (j.duration/step_minute)*width_step;
+
+								$(".time_block[personal='"+i.id+"'][hour='"+hour+"'][minute='"+minute+"']").html(	`<div sort="`+j.procedure_id+`" style="width: `+width+`px;" class="write_block">
+																														<span>`+j.client_name+` `+j.client_phone+`</span>
+																													</div>
+																													<div sort="`+j.procedure_id+`" class="order_detail">
+																														<p><b>პერსონალი:</b> `+i.name+`</p>
+																														<p><b>კლიენტი:</b> `+j.client_name+`</p>
+																														<p><b>ტელეფონი:</b> `+j.client_phone+`</p>
+																														<p><b>პროცედურა:</b> `+j.proc_name+`</p>
+																														<p><b>ხანგძლივობა:</b> `+j.duration+` წუთი</p>
+																														<p><b>დრო:</b> `+j.start_proc+`-`+j.end_proc+`</p>
+																														<p><b>ფასი:</b> `+j.price+` GEL</p>
+																													</div>`)
+								//<div style="width: 270px;" class="write_block">ჩაწერა ლაშა ტოროლა</div>
+							});
 							
-							let hour = j.start_proc.split(':')[0];
-							let minute = j.start_proc.split(':')[1];
-							if(minute == '00'){
-								minute = 0;
-							}
+						})
+					}
+				});
+			}
 
-							let width = (j.duration/step_minute)*width_step;
-
-							$(".time_block[personal='"+i.id+"'][hour='"+hour+"'][minute='"+minute+"']").html(	`<div sort="`+j.procedure_id+`" style="width: `+width+`px;" class="write_block">
-																													<span>`+j.client_name+` `+j.client_phone+`</span>
-																												</div>
-																												<div sort="`+j.procedure_id+`" class="order_detail">
-																													<p><b>პერსონალი:</b> `+i.name+`</p>
-																													<p><b>კლიენტი:</b> `+j.client_name+`</p>
-																													<p><b>ტელეფონი:</b> `+j.client_phone+`</p>
-																													<p><b>პროცედურა:</b> `+j.proc_name+`</p>
-																													<p><b>ხანგძლივობა:</b> `+j.duration+` წუთი</p>
-																													<p><b>დრო:</b> `+j.start_proc+`-`+j.end_proc+`</p>
-																													<p><b>ფასი:</b> `+j.price+` GEL</p>
-																												</div>`)
-							//<div style="width: 270px;" class="write_block">ჩაწერა ლაშა ტოროლა</div>
-						});
-						
-					})
-				}
-			});
+			
 			
 		});
+
+		function generateTDVertical(colspan = 4, personal_ids, user_count){
+			console.log(personal_ids)
+			let html;
+			let start_hour = 9;
+			for(let i = 0; i<13; i++){
+				let start_minute = 0;
+				if(start_hour < 10){
+					start_hour = '0'+start_hour;
+				}
+				for(let j = 0; j<colspan;j++){
+					html += `<tr>`
+					let user_index = 0;
+					for(let k = 0; k<=user_count;k++){
+
+						if(k == 0 && j%colspan == 0){
+							html += `<td rowspan="4">`+start_hour+`:00</td>`
+						}
+						else{
+							let child = k+2;
+							let personal_id = $(".top_header td:nth-child("+child+")").attr('personal-id')
+							html += `<td child_nth="4444`+user_index+`" hour="`+start_hour+`" minute="`+start_minute+`" class="time_block left_table_vert"></td>`
+						}
+						user_index++;
+					}
+					html += `</tr>`;
+					start_minute = start_minute+15;
+				}
+				start_hour++;
+			}
+
+			return html;
+			
+		}
 
 		function generateTD(colspan = 4, personal_id){
 			let html = `<tr>`;
