@@ -246,8 +246,9 @@
 		}
 		.data-table{
     		overflow-x: scroll;
-			
+			height: 79vh;
 		}
+		
 		.block_table{
 			width: max-content;
 		}
@@ -272,6 +273,24 @@
 		.time_block:hover{
 			background-color: #d3d3d3;
 			cursor: pointer;
+		}
+		.order_detail{
+			position: absolute;
+			z-index: 99999;
+			background-color: #fff;
+			width: 260px;
+			display: none;
+			padding: 8px;
+			border-radius: 12px;
+			top: 30px;
+			border: 1px solid #0000002b;
+			box-shadow: 7px 8px 8px 2px rgba(0,0,0,0.36);
+			-webkit-box-shadow: 7px 8px 8px 2px rgba(0,0,0,0.36);
+			-moz-box-shadow: 7px 8px 8px 2px rgba(0,0,0,0.36);
+		}
+		.order_detail p{
+			margin-bottom: 4px;
+			font-size: 14px;
 		}
 	</style>
 	<!--[if gte IE 5]><frame></frame><![endif]-->
@@ -495,13 +514,25 @@
 
 							let width = (j.duration/step_minute)*width_step;
 
-							$(".time_block[personal='"+i.id+"'][hour='"+hour+"'][minute='"+minute+"']").html(`<div style="width: `+width+`px;" class="write_block">`+j.client_name+` `+j.client_phone+`</div>`)
+							$(".time_block[personal='"+i.id+"'][hour='"+hour+"'][minute='"+minute+"']").html(	`<div sort="`+j.procedure_id+`" style="width: `+width+`px;" class="write_block">
+																													<span>`+j.client_name+` `+j.client_phone+`</span>
+																												</div>
+																												<div sort="`+j.procedure_id+`" class="order_detail">
+																													<p><b>პერსონალი:</b> `+i.name+`</p>
+																													<p><b>კლიენტი:</b> `+j.client_name+`</p>
+																													<p><b>ტელეფონი:</b> `+j.client_phone+`</p>
+																													<p><b>პროცედურა:</b> `+j.proc_name+`</p>
+																													<p><b>ხანგძლივობა:</b> `+j.duration+` წუთი</p>
+																													<p><b>დრო:</b> `+j.start_proc+`-`+j.end_proc+`</p>
+																													<p><b>ფასი:</b> `+j.price+` GEL</p>
+																												</div>`)
 							//<div style="width: 270px;" class="write_block">ჩაწერა ლაშა ტოროლა</div>
 						});
 						
 					})
 				}
 			});
+			
 		});
 
 		function generateTD(colspan = 4, personal_id){
@@ -522,6 +553,17 @@
 			return html;
 			
 		}
+
+		$(document).on('mouseover', '.write_block', function(){
+			let sort = $(this).attr('sort');
+
+			$(".order_detail[sort='"+sort+"']").css('display','block')
+		})
+		$(document).on('mouseleave', '.write_block', function(){
+			let sort = $(this).attr('sort');
+
+			$(".order_detail[sort='"+sort+"']").css('display','none')
+		})
 	</script>
             
 </body>
