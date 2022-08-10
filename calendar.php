@@ -213,6 +213,7 @@
 		}
 		.calendar_table{
 			width: 100%;
+
 		}
 		.time_block_container{
 			display: flex;
@@ -247,6 +248,13 @@
 		.data-table{
     		overflow-x: scroll;
 			height: 79vh;
+			padding: 10px;
+		}
+
+		.data-table0{
+			height: 79vh;
+			overflow: hidden;
+			padding: 10px;
 		}
 		
 		.block_table{
@@ -334,7 +342,7 @@
 						</div>
 					</div>
 					<div class="row">
-							<div class="col-md-3">
+							<div class="data-table0 col-md-3">
 								<table class="calendar_table" border="1">
 									<tr>
 										<td class="left_table">თანამშრომლები</td>
@@ -564,6 +572,24 @@
 
 			$(".order_detail[sort='"+sort+"']").css('display','none')
 		})
+
+
+		$(".data-table").on('scroll', function(e) { 
+			var ele = $(e.currentTarget);
+			var left = ele.scrollLeft();
+			var top = ele.scrollTop();
+
+			$(".data-table0").scrollTop(top);
+
+			/* if (ele.attr("id") === 'div1') {
+				$("#div2").scrollTop(top);
+				$("#div2").scrollLeft(left);
+			} else {
+				$("#div1").scrollTop(top);
+				$("#div1").scrollLeft(left);
+			} */
+		});
+		
 	</script>
             
 </body>
