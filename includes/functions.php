@@ -162,6 +162,7 @@
 <script type="text/javascript" language="javascript" src="assets/js/kendoUI/pako_deflate.min.js"></script>  
 
 <script type="text/javascript" language="javascript" src="assets/js/timepicker.js"></script>
+<script type="text/javascript" language="javascript" src="assets/js/orders.js"></script>
 
 <script type="text/javascript" language="javascript" src="assets/js/jquery.datetimepicker.full.min.js"></script> 
 

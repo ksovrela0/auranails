@@ -369,13 +369,14 @@
 							<input id="cal_date">
 						</div>
 					</div>
-
-					<div class="data-table-vert col-md-12">
-						<table class="calendar_table" border="1">
-							<tr class="top_header">
-								<td class="left_table_vert">დრო</td>
-							</tr>
-						</table>
+					<div class="row">
+						<div class="data-table-vert col-md-12">
+							<table class="calendar_table" border="1">
+								<tr class="top_header">
+									<td class="left_table_vert">დრო</td>
+								</tr>
+							</table>
+						</div>
 					</div>
 					<!-- <div class="row">
 							<div class="data-table0 col-md-3">
@@ -486,10 +487,6 @@
 	
 	<div title="ჩაწერა" id="get_edit_page"></div>
 	<div title="ჩაწერა - პროცედურა" id="get_product_page"></div>
-	<div title="შეკვეთა - პროდუქტი - მინები" id="get_glass_page"></div>
-	<div title="SMS ყველასთან" id="sms_to_all_div"></div>
-	<div title="SMS მონიშნულებთან" id="sms_to_checked_div"></div>
-	<div title="შეკვეთა - პროდუქტი - მინები - პროცესი" id="get_path_page"></div>
 		<!-- <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>These items will be permanently deleted and cannot be recovered. Are you sure?</p> -->
 	</div>
 	<script>
@@ -556,10 +553,10 @@
 
 								let height = (u.duration/step_minute)*height_step;
 
-								$(".time_block[personal-id='"+x+"'][hour='"+hour+"'][minute='"+minute+"']").html(	`<div sort="`+u.procedure_id+`" style="width:100%;height: `+height+`px;" class="write_block">
+								$(".time_block[personal-id='"+x+"'][hour='"+hour+"'][minute='"+minute+"']").html(	`<div order-id="`+u.order_id+`"  sort="`+u.procedure_id+`" style="width:100%;height: `+height+`px;" class="write_block">
 																														<span>`+u.client_name+` `+u.client_phone+`</span>
 																													</div>
-																													<div sort="`+u.procedure_id+`" class="order_detail_left">
+																													<divsort="`+u.procedure_id+`" class="order_detail_left">
 																														<p><b>პერსონალი:</b> `+u.client_name+`</p>
 																														<p><b>კლიენტი:</b> `+u.client_name+`</p>
 																														<p><b>ტელეფონი:</b> `+u.client_phone+`</p>
@@ -629,7 +626,7 @@
 
 								let width = (j.duration/step_minute)*width_step;
 
-								$(".time_block[personal='"+i.id+"'][hour='"+hour+"'][minute='"+minute+"']").html(	`<div sort="`+j.procedure_id+`" style="width: `+width+`px;" class="write_block">
+								$(".time_block[personal='"+i.id+"'][hour='"+hour+"'][minute='"+minute+"']").html(	`<div order-id="`+j.order_id+`" sort="`+j.procedure_id+`" style="width: `+width+`px;" class="write_block">
 																														<span>`+j.client_name+` `+j.client_phone+`</span>
 																													</div>
 																													<div sort="`+j.procedure_id+`" class="order_detail">
@@ -734,6 +731,22 @@
 				$("#div1").scrollTop(top);
 				$("#div1").scrollLeft(left);
 			} */
+		});
+
+
+		$(document).on('click', '.time_block', function(e){
+			
+			if($(e.target).hasClass('time_block')){
+				let hour = $(this).attr('hour');
+				let minute = $(this).attr('minute');
+
+				new_writing();
+			}
+			else if($(e.target).hasClass('write_block')){
+				let order_id = $(this).attr('order-id');
+			}
+
+			
 		});
 		
 	</script>
