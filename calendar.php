@@ -323,7 +323,7 @@
 			-webkit-box-shadow: 7px 8px 8px 2px rgba(0,0,0,0.36);
 			-moz-box-shadow: 7px 8px 8px 2px rgba(0,0,0,0.36);
 			top: 0px;
-    		left: 180px;
+    		right: 0px;
 		}
 		.order_detail p, .order_detail_left p{
 			margin-bottom: 4px;
@@ -390,7 +390,7 @@
 							<input id="cal_date">
 						</div>
 					</div>
-					<div class="row">
+					<div class="row calendar_div">
 						<div class="data-table-vert col-md-12">
 							<table class="calendar_table" border="1">
 								<tr class="top_header">
@@ -512,9 +512,114 @@
 	</div>
 	<script>
 		$(document).ready(function(){
+			loadCalendar();			
+		});
 
-			let calendar_type = 'vertical'
+		function generateTDVertical(colspan = 4, user_count){
+			let html;
+			let start_hour = 9;
+			for(let i = 0; i<13; i++){
+				let start_minute = 0;
+				if(start_hour < 10){
+					start_hour = '0'+start_hour;
+				}
+				for(let j = 0; j<colspan;j++){
+					html += `<tr>`
+					let user_index = 0;
+					for(let k = 0; k<=user_count-1;k++){
 
+						if(k == 0 && j%colspan == 0){
+							html += `<td rowspan="4" class="vert_time_block">`+start_hour+`:00</td>`
+						}
+						else{
+							let child = user_index+2;
+							let personal_id = $(".top_header td:nth-child("+child+")").attr('personal-id')
+							html += `<td personal-id="`+personal_id+`" hour="`+start_hour+`" minute="`+start_minute+`" class="time_block left_table_vert"></td>`
+							user_index++;
+						}
+						
+					}
+					html += `</tr>`;
+					start_minute = start_minute+15;
+				}
+				start_hour++;
+			}
+
+			return html;
+			
+		}
+
+		function generateTD(colspan = 4, personal_id){
+			let html = `<tr>`;
+			let start_hour = 9;
+			
+			for(let i = 0; i<13; i++){
+				let start_minute = 0;
+				for(let j = 0; j<colspan;j++){
+					html += `<td personal="`+personal_id+`" hour="`+start_hour+`" minute="`+start_minute+`" class="time_block"></td>`;
+					start_minute = start_minute+15;
+				}
+				start_hour++;
+			}
+
+			html += `</tr>`;
+
+			return html;
+			
+		}
+
+		$(document).on('mouseover', '.write_block,.order_detail_left', function(){
+			let sort = $(this).attr('sort');
+			
+			$(".order_detail[sort='"+sort+"']").css('display','block')
+			$(".order_detail_left[sort='"+sort+"']").css('display','block')
+		})
+		$(document).on('mouseleave', '.write_block,.order_detail_left', function(){
+			let sort = $(this).attr('sort');
+
+			$(".order_detail[sort='"+sort+"']").css('display','none')
+			$(".order_detail_left[sort='"+sort+"']").css('display','none')
+		})
+
+
+		$(".data-table").on('scroll', function(e) { 
+			var ele = $(e.currentTarget);
+			var left = ele.scrollLeft();
+			var top = ele.scrollTop();
+
+			$(".data-table0").scrollTop(top);
+
+			/* if (ele.attr("id") === 'div1') {
+				$("#div2").scrollTop(top);
+				$("#div2").scrollLeft(left);
+			} else {
+				$("#div1").scrollTop(top);
+				$("#div1").scrollLeft(left);
+			} */
+		});
+
+
+		$(document).on('click', '.time_block', function(e){
+			let personal_id = $(this).attr('personal-id');
+			let hour = $(this).attr('hour');
+			let minute = $(this).attr('minute');
+			if($(e.target).hasClass('time_block')){
+				
+
+				new_writing('',personal_id,hour,minute);
+			}
+			else if($(e.target).hasClass('write_block')){
+				let order_id = $(e.target).attr('order-id');
+				new_writing(order_id,personal_id);
+			}
+
+			
+		});
+		
+
+		function loadCalendar(calendar_type = 'vertical'){
+			$(".calendar_div").html(``);
+			
 			var today = new Date();
 			var dd = today.getDate();
 
@@ -530,7 +635,13 @@
 			});
 
 			if (calendar_type == 'vertical'){
-
+				$(".calendar_div").html(`	<div class="data-table-vert col-md-12">
+												<table class="calendar_table" border="1">
+													<tr class="top_header">
+														<td class="left_table_vert">დრო</td>
+													</tr>
+												</table>
+											</div>`);
 				let colspan = 4;
 				let step_minute = 15;
 				let height_step = 30;
@@ -547,19 +658,18 @@
 
 						let user_count = data.length;
 						let personal_ids = [];
-						
+						//alert(user_count)
 						let pers_procedures = [];
 						data.forEach(function(i, x){
 							$(".top_header").append(`<td  personal-id="`+i.id+`" class="vertical_td">`+i.name+`</td>`)
 							personal_ids.push(i.id);
 							pers_procedures[i.id] = i.procedures;
+							console.log(x);
 							if(x == user_count-1){
 								$(".calendar_table").append(generateTDVertical(4, user_count));
 							}
 
 						})
-
-						console.log(pers_procedures)
 
 						pers_procedures.forEach(function(j, x){
 							j.forEach(function(u,t){
@@ -567,7 +677,6 @@
 								let hour = u.start_proc.split(':')[0];
 								let minute = u.start_proc.split(':')[1];
 
-								console.log(x,hour,minute)
 								if(minute == '00'){
 									minute = 0;
 								}
@@ -578,7 +687,7 @@
 																														<span>`+u.client_name+` `+u.client_phone+`</span>
 																													</div>
 																													<div sort="`+u.procedure_id+`" class="order_detail_left">
-																														<p><b>პერსონალი:</b> `+u.client_name+`</p>
+																														<p><b>პერსონალი:</b> `+u.personal+`</p>
 																														<p><b>კლიენტი:</b> `+u.client_name+`</p>
 																														<p><b>ტელეფონი:</b> `+u.client_phone+`</p>
 																														<p><b>პროცედურა:</b> `+u.proc_name+`</p>
@@ -666,110 +775,7 @@
 					}
 				});
 			}
-
-			
-			
-		});
-
-		function generateTDVertical(colspan = 4, user_count){
-			let html;
-			let start_hour = 9;
-			for(let i = 0; i<13; i++){
-				let start_minute = 0;
-				if(start_hour < 10){
-					start_hour = '0'+start_hour;
-				}
-				for(let j = 0; j<colspan;j++){
-					html += `<tr>`
-					let user_index = 0;
-					for(let k = 0; k<=user_count;k++){
-
-						if(k == 0 && j%colspan == 0){
-							html += `<td rowspan="4" class="vert_time_block">`+start_hour+`:00</td>`
-						}
-						else{
-							let child = user_index+2;
-							let personal_id = $(".top_header td:nth-child("+child+")").attr('personal-id')
-							html += `<td personal-id="`+personal_id+`" hour="`+start_hour+`" minute="`+start_minute+`" class="time_block left_table_vert"></td>`
-							user_index++;
-						}
-						
-					}
-					html += `</tr>`;
-					start_minute = start_minute+15;
-				}
-				start_hour++;
-			}
-
-			return html;
-			
 		}
-
-		function generateTD(colspan = 4, personal_id){
-			let html = `<tr>`;
-			let start_hour = 9;
-			
-			for(let i = 0; i<13; i++){
-				let start_minute = 0;
-				for(let j = 0; j<colspan;j++){
-					html += `<td personal="`+personal_id+`" hour="`+start_hour+`" minute="`+start_minute+`" class="time_block"></td>`;
-					start_minute = start_minute+15;
-				}
-				start_hour++;
-			}
-
-			html += `</tr>`;
-
-			return html;
-			
-		}
-
-		$(document).on('mouseover', '.write_block', function(){
-			let sort = $(this).attr('sort');
-			
-			$(".order_detail[sort='"+sort+"']").css('display','block')
-			$(".order_detail_left[sort='"+sort+"']").css('display','block')
-		})
-		$(document).on('mouseleave', '.write_block', function(){
-			let sort = $(this).attr('sort');
-
-			$(".order_detail[sort='"+sort+"']").css('display','none')
-			$(".order_detail_left[sort='"+sort+"']").css('display','none')
-		})
-
-
-		$(".data-table").on('scroll', function(e) { 
-			var ele = $(e.currentTarget);
-			var left = ele.scrollLeft();
-			var top = ele.scrollTop();
-
-			$(".data-table0").scrollTop(top);
-
-			/* if (ele.attr("id") === 'div1') {
-				$("#div2").scrollTop(top);
-				$("#div2").scrollLeft(left);
-			} else {
-				$("#div1").scrollTop(top);
-				$("#div1").scrollLeft(left);
-			} */
-		});
-
-
-		$(document).on('click', '.time_block', function(e){
-			
-			if($(e.target).hasClass('time_block')){
-				let hour = $(this).attr('hour');
-				let minute = $(this).attr('minute');
-
-				new_writing();
-			}
-			else if($(e.target).hasClass('write_block')){
-				let order_id = $(this).attr('order-id');
-			}
-
-			
-		});
-		
 	</script>
             
 </body>

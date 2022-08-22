@@ -439,36 +439,50 @@ switch ($act){
 
     break;
 
-    case 'save_product':
+    case 'save_procedure':
 
-        $id          = $_REQUEST['id'];
-        $selected_product_id  = $_REQUEST['selected_product_id'];
+        $id          = $_REQUEST['proc_id'];
         $order_id    = $_REQUEST['order_id'];
+        $procedure_cat_id    = $_REQUEST['procedure_cat_id'];
+        $personal_id    = $_REQUEST['personal_id'];
+        $duration    = $_REQUEST['duration'];
+        $price    = $_REQUEST['price'];
+        $salary_percent    = $_REQUEST['salary_percent'];
+        $start_proc    = $_REQUEST['start_proc'];
 
         $db->setQuery(" SELECT  COUNT(*) AS cc
-                        FROM    orders_product
+                        FROM    procedures
                         WHERE   id = '$id' AND actived = 1");
         $isset = $db->getResultArray();
 
         if($isset['result'][0]['cc'] == 0){
-        $db->setQuery("INSERT INTO orders_product SET
-                                        id = '$id',
-                                        user_id='$user_id',
-                                        datetime=NOW(),
-                                        order_id='$order_id',
-                                        product_id='$selected_product_id'");
+            $db->setQuery("INSERT INTO procedures SET
+                                            id = '$id',
+                                            user_id='$personal_id',
+                                            datetime=NOW(),
+                                            order_id='$order_id',
+                                            procedure_id='$procedure_cat_id',
+                                            duration='$duration',
+                                            price='$price',
+                                            start_proc='$start_proc',
+                                            salary_percent='$salary_percent'");
 
-        $db->execQuery();
-        $data['error'] = '';
+            $db->execQuery();
+            $data['error'] = '';
         }
 
         else{
-        $db->setQuery("UPDATE orders_product SET user_id='$user_id',
-                                        order_id='$order_id',
-                                        product_id='$selected_product_id'
-                    WHERE id='$id'");
-        $db->execQuery();
-        $data['error'] = '';
+            $db->setQuery("UPDATE procedures    SET     user_id='$personal_id',
+                                                        datetime=NOW(),
+                                                        order_id='$order_id',
+                                                        procedure_id='$procedure_cat_id',
+                                                        duration='$duration',
+                                                        price='$price',
+                                                        start_proc='$start_proc',
+                                                        salary_percent='$salary_percent'
+                                                WHERE id='$id'");
+            $db->execQuery();
+            $data['error'] = '';
         }
 
     break;
@@ -916,14 +930,15 @@ switch ($act){
 
         $db->setQuery("SELECT	procedures.id,
                                 `procedure`.name,
-                                `procedure`.duration,
+                                `procedures`.duration,
                                 CONCAT(personal.name, ' ', personal.lastname) AS name,
                                 procedures.price
 
                         FROM 		procedures
                         JOIN		`procedure` ON `procedure`.id = procedures.procedure_id
                         JOIN		personal ON personal.id = procedures.user_id
-                        WHERE 	procedures.actived = 1 AND procedures.order_id = '$order_id'");
+                        WHERE 	procedures.actived = 1 AND procedures.order_id = '$order_id'
+                        ORDER BY procedures.id");
         $result = $db->getKendoList($columnCount, $cols);
 
         $data = $result;
@@ -1166,6 +1181,7 @@ function getProduct($id){
     $db->setQuery(" SELECT  id,
                             procedure_id,
                             duration,
+                            start_proc,
                             price,
                             salary_fix,
                             salary_percent,
@@ -1198,6 +1214,10 @@ function getProductPage($id, $res = ''){
                                 <select id="personal_id">
                                     '.getPersonalData($res['user_id']).'
                                 </select>
+                            </div>
+                            <div class="col-sm-4">
+                                <label>დაწყების დრო</label>
+                                <input value="'.$res['start_proc'].'" data-nec="0" style="height: 18px; width: 95%;" type="text" id="procedure_start" class="idle" autocomplete="off">
                             </div>
                             <div class="col-sm-4">
                                 <label>ხანგძლივობა</label>
