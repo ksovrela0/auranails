@@ -930,6 +930,7 @@ switch ($act){
 
         $db->setQuery("SELECT	procedures.id,
                                 `procedure`.name,
+                                `procedures`.start_proc,
                                 `procedures`.duration,
                                 CONCAT(personal.name, ' ', personal.lastname) AS name,
                                 procedures.price

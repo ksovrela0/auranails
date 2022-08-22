@@ -608,8 +608,12 @@
 
 				new_writing('',personal_id,hour,minute);
 			}
-			else if($(e.target).hasClass('write_block')){
+			else if($(e.target).hasClass('write_block') || $(e.target).hasClass('order_detail_left') || $(e.target).parent().hasClass('order_detail_left')){
 				let order_id = $(e.target).attr('order-id');
+				
+				if(order_id == '' || typeof order_id == 'undefined'){
+					order_id = $(e.target).parent().attr('order-id');
+				}
 				new_writing(order_id,personal_id);
 			}
 
@@ -686,7 +690,7 @@
 								$(".time_block[personal-id='"+x+"'][hour='"+hour+"'][minute='"+minute+"']").html(	`<div order-id="`+u.order_id+`"  sort="`+u.procedure_id+`" style="width:100%;height: `+height+`px;" class="write_block">
 																														<span>`+u.client_name+` `+u.client_phone+`</span>
 																													</div>
-																													<div sort="`+u.procedure_id+`" class="order_detail_left">
+																													<div order-id="`+u.order_id+`" sort="`+u.procedure_id+`" class="order_detail_left">
 																														<p><b>პერსონალი:</b> `+u.personal+`</p>
 																														<p><b>კლიენტი:</b> `+u.client_name+`</p>
 																														<p><b>ტელეფონი:</b> `+u.client_phone+`</p>

@@ -107,9 +107,9 @@ function LoadKendoTable_product(hidden) {
     var actions = '<div id="new_product">დამატება</div><div id="copy_product">კოპირება</div><div id="del_product"> წაშლა</div>';
     var editType = "popup"; // Two types "popup" and "inline"
     var itemPerPage = 100;
-    var columnsCount = 5;
-    var columnsSQL = ["id2:string", "name_product:string", "glass_count:string", "picture:string", "action:string"];
-    var columnGeoNames = ["ID", "დასახელება", "ხანგძლივობა", "შემსრულებელი", "ფასი"];
+    var columnsCount = 6;
+    var columnsSQL = ["id2:string", "name_product:string", "proc_start:string", "proc_duration:string", "picture:string", "action:string"];
+    var columnGeoNames = ["ID", "დასახელება", "დაწყება", "ხანგძლივობა", "შემსრულებელი", "ფასი"];
     var showOperatorsByColumns = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     var selectors = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     var locked = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
