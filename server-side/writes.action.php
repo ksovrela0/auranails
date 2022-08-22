@@ -50,6 +50,20 @@ switch ($act){
         $data = array('page' => getPage());
 
     break;
+    case 'find_client':
+
+        $term = $_REQUEST['term'];
+
+        $db->setQuery("SELECT   clients.id,
+                                clients.client_name AS value,
+                                clients.client_sex,
+                                clients.client_phone
+                        FROM clients
+                        WHERE actived = 1 AND client_name LIKE '%$term%'");
+
+        $data = $db->getResultArray()['result'];
+
+    break;
     case 'get_personal_interest':
         $id = $_REQUEST['id'];
         $db->setQuery("SELECT salary FROM personal WHERE id = '$id' AND actived = 1");
@@ -1484,6 +1498,7 @@ function getPage($id, $res = ''){
     
 
     <input type="hidden" id="writing_id" value="'.$id.'">
+    <input type="hidden" id="client_id" value="">
 
     ';
 

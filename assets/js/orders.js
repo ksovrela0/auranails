@@ -25,6 +25,14 @@ function new_writing(order_id = '',personal_id='',hour='',minute=''){
                 var multiselect = $("#zones").data("kendoMultiSelect");
                 multiselect.bind("change", reloadImpulses);
             }); */
+            alert(234)
+            $( "#client_name" ).autocomplete({
+                source: "server-side/writes.action.php?act=find_client",
+                minLength: 2,
+                select: function( event, ui ) {
+                    console.log( "Selected: " + ui.item.value + " aka " + ui.item.id );
+                }
+            });
             var pr = "&order_id="+$("#writing_id").val();
             LoadKendoTable_product(pr);
             $("#get_edit_page").dialog({
@@ -245,25 +253,17 @@ $(document).on("dblclick", "#main_div tr.k-state-selected", function() {
                 uiLibrary: 'bootstrap4'
             });
             var kendo = new kendoUI();
-            /* var sex_id = $("input[name='sex_id']:checked").val();
-            $.ajax({
-                url: "server-side/writes.action.php",
-                type: "POST",
-                data: {
-                    act: "get_selected_zones",
-                    id: dItem.id
-                },
-                dataType: "json",
-                success: function(data) {
-                    if(sex_id == 1) {
-                        kendo.kendoMultiSelector('zones', 'server-side/writes.action.php', 'get_selected_zones_female', "აირჩით ზონები", data.selectedZones);
-                    } else if(sex_id == 2) {
-                        kendo.kendoMultiSelector('zones', 'server-side/writes.action.php', 'get_selected_zones_male', "აირჩით ზონები", data.selectedZones);
-                    }
-                    var multiselect = $("#zones").data("kendoMultiSelect");
-                    multiselect.bind("change", reloadImpulses);
+            $( "#client_name" ).autocomplete({
+                source: "server-side/writes.action.php?act=find_client",
+                minLength: 2,
+                select: function( event, ui ) {
+                    $("#client_id").val(ui.item.id);
+                    $("#client_name").val(ui.item.value);
+                    $("#client_phone").val(ui.item.client_phone);
+                    $("#client_sex").val(ui.item.client_sex);
+                    $("#client_sex").trigger("chosen:updated");
                 }
-            }); */
+            });
             var pr = "&order_id="+dItem.id;
             LoadKendoTable_product(pr);
             $("#get_edit_page").dialog({
