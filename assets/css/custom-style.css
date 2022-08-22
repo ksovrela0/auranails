@@ -14,6 +14,12 @@ body{
     overflow-y: scroll;
     position: relative;
 }
+.ui-autocomplete{
+	z-index: 9999!important;
+}
+.ui-autocomplete-loading {
+    background: white url("../img/ui-anim_basic_16x16.gif") right center no-repeat;
+  }
 .page {
 	display: flex;
     flex-direction: column;

@@ -25,12 +25,15 @@ function new_writing(order_id = '',personal_id='',hour='',minute=''){
                 var multiselect = $("#zones").data("kendoMultiSelect");
                 multiselect.bind("change", reloadImpulses);
             }); */
-            alert(234)
             $( "#client_name" ).autocomplete({
                 source: "server-side/writes.action.php?act=find_client",
                 minLength: 2,
                 select: function( event, ui ) {
-                    console.log( "Selected: " + ui.item.value + " aka " + ui.item.id );
+                    $("#client_id").val(ui.item.id);
+                    $("#client_name").val(ui.item.value);
+                    $("#client_phone").val(ui.item.client_phone);
+                    $("#client_sex").val(ui.item.client_sex);
+                    $("#client_sex").trigger("chosen:updated");
                 }
             });
             var pr = "&order_id="+$("#writing_id").val();
