@@ -354,8 +354,10 @@
 				$("#poduct_category").chosen();
 				var kendo = new kendoUI();
 				kendo.kendoMultiSelector('personal', 'server-side/procedure.action.php', 'get_personal', "აირჩით თანამშრომლები", data.selectedZones);
-				$("#duration").timepicker({
-					uiLibrary: 'bootstrap4'
+				$("#duration").datetimepicker({
+					datepicker:false,
+					step: 15,
+					format:'H:i',
 				});
 				$("#get_edit_page").dialog({
 					resizable: false,
