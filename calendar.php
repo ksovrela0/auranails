@@ -228,7 +228,8 @@
 		.left_table_vert{
 			width: 60px;
 			height: 30px;
-			position:relative;
+			position: relative;
+			border: 1px solid #cacaca;
 		}
 		.time_header{
 			height: 30px;
@@ -240,13 +241,19 @@
 			top: 0;
 			left: 0;
 			white-space: nowrap;
-    		overflow: hidden;
+			overflow: hidden;
 			height: 30px;
 			background-color: #1ab11a;
 			padding-left: 5px;
 			color: white;
 			cursor: pointer;
 			z-index: 20;
+			text-align: center;
+			transition: 0.4s ease;
+		}
+		.write_block:hover{
+			box-shadow: 5px 5px 0.4pc #888888;
+			opacity: 0.8;
 		}
 		.data-table td{
 			position: relative;
@@ -327,6 +334,20 @@
 
 		.vertical_td{
 			width: 180px;
+		}
+
+		.top_header{
+			background: gray;
+			color: white;
+			border: 1px solid white;
+			text-align: center;
+			box-shadow: 5px 5px #d7d2d2;
+		}
+		.vert_time_block{
+			background: #808080;
+			color: white;
+			text-align: center;
+			border: 1px solid white;
 		}
 	</style>
 	<!--[if gte IE 5]><frame></frame><![endif]-->
@@ -664,7 +685,7 @@
 					for(let k = 0; k<=user_count;k++){
 
 						if(k == 0 && j%colspan == 0){
-							html += `<td rowspan="4">`+start_hour+`:00</td>`
+							html += `<td rowspan="4" class="vert_time_block">`+start_hour+`:00</td>`
 						}
 						else{
 							let child = user_index+2;
