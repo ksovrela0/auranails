@@ -160,6 +160,7 @@ function save_order() {
     params.start_proc = $("#start_proc").val();
     params.end_proc = $("#end_proc").val();
     params.client_comment = $("#client_comment").val();
+    params.client_id = $("#client_id").val();
 
     var ready_to_save = 0;
     if(params.client_name == '') {

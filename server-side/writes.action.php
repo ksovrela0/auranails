@@ -434,6 +434,7 @@ switch ($act){
         $end_proc    = $_REQUEST['end_proc'];
         $order_date     = $_REQUEST['order_date'];
         $client_comment      = $_REQUEST['client_comment'];
+        $client_id      = $_REQUEST['client_id'];
 
         $db->setQuery(" SELECT  COUNT(*) AS cc
                         FROM    orders
@@ -450,6 +451,7 @@ switch ($act){
                                                 comment='$client_comment',
                                                 client_phone='$client_phone',
                                                 client_sex='$client_sex',
+                                                client_id='$client_id',
                                                 start_proc='$start_proc',
                                                 end_proc='$end_proc'");
 
@@ -464,6 +466,7 @@ switch ($act){
                                                 comment='$client_comment',
                                                 client_phone='$client_phone',
                                                 client_sex='$client_sex',
+                                                client_id='$client_id',
                                                 start_proc='$start_proc',
                                                 end_proc='$end_proc'
                             WHERE id='$id'");

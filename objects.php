@@ -319,8 +319,10 @@
                 $("#poduct_category").chosen();
                 var kendo = new kendoUI();
 				kendo.kendoMultiSelector('grafik', 'server-side/personal.action.php', 'get_week_day', "აირჩით დღეები", data.selectedZones);
-				$("#work_start,#work_end").timepicker({
-					uiLibrary: 'bootstrap4'
+				$("#work_start,#work_end").datetimepicker({
+					datepicker:false,
+					step: 15,
+					format:'H:i',
 				});
 				$("#get_edit_page").dialog({
 					resizable: false,
@@ -352,8 +354,10 @@
 				$("#poduct_category").chosen();
 				var kendo = new kendoUI();
 				kendo.kendoMultiSelector('grafik', 'server-side/personal.action.php', 'get_week_day', "აირჩით დღეები", data.selectedZones);
-				$("#work_start,#work_end").timepicker({
-					uiLibrary: 'bootstrap4'
+				$("#work_start,#work_end").datetimepicker({
+					datepicker:false,
+					step: 15,
+					format:'H:i',
 				});
 				$("#get_edit_page").dialog({
 					resizable: false,
