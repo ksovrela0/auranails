@@ -95,11 +95,28 @@ $(document).on("change", "#procedure_cat", function(){
             $("#price").val(data.price);
             $("#salary_fix").val(0);
 
+            $("#personal_id").html(data.personal);
+
+            $("#personal_id").trigger("chosen:updated");
+
         }
     });
 });
 
-
+$(document).on('change', '#personal_id', function(){
+    $.ajax({
+        url: "server-side/writes.action.php",
+        type: "POST",
+        data: {
+            act: "get_personal_interest",
+            id: $(this).val()
+        },
+        dataType: "json",
+        success: function(data) {
+            $("#salary_percent").val(data.salary);
+        }
+    });
+});
 function LoadKendoTable_product(hidden) {
     //KendoUI CLASS CONFIGS BEGIN
     var aJaxURL = "server-side/writes.action.php";

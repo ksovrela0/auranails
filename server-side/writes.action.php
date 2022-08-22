@@ -63,6 +63,26 @@ switch ($act){
                         WHERE actived = 1  AND id = '$id'");
 
         $data = $db->getResultArray()['result'][0];
+
+        $opt = '<option value="0">---</option>';
+
+        $db->setQuery("SELECT   id,
+                                CONCAT(name,' ',lastname) AS 'name'
+                        FROM    personal
+                        WHERE   actived = 1 AND id IN (SELECT personal_id FROM procedure_personal WHERE personal_id = personal.id)");
+        $cats = $db->getResultArray();
+        foreach($cats['result'] AS $cat){
+            if($cat[id] == 99999999){
+                $opt .= '<option value="'.$cat[id].'" selected="selected">'.$cat[name].'</option>';
+            }
+            else{
+                $opt .= '<option value="'.$cat[id].'">'.$cat[name].'</option>';
+            }
+        }
+
+        $data['personal'] = $opt;
+
+
         break;
     case 'check_login':
         $login = $_REQUEST['login'];
@@ -1212,9 +1232,12 @@ function getProductPage($id, $res = ''){
                             </div>
                             <div class="col-sm-4">
                                 <label>აირჩიეთ შემსრულებელი</label>
-                                <select id="personal_id">
-                                    '.getPersonalData($res['user_id']).'
-                                </select>
+                                <select id="personal_id">';
+                                if($res['user_id'] != ''){
+                                    $data .= getPersonalData($res['user_id']);
+                                }    
+                                
+                                $data .= '</select>
                             </div>
                             <div class="col-sm-4">
                                 <label>დაწყების დრო</label>

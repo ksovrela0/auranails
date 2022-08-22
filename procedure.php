@@ -319,8 +319,10 @@
                 $("#poduct_category").chosen();
                 var kendo = new kendoUI();
 				kendo.kendoMultiSelector('personal', 'server-side/procedure.action.php', 'get_personal', "აირჩით თანამშრომლები", data.selectedZones);
-				$("#duration").timepicker({
-					uiLibrary: 'bootstrap4'
+				$("#duration").datetimepicker({
+					datepicker:false,
+					step: 15,
+					format:'H:i',
 				});
 				$("#get_edit_page").dialog({
 					resizable: false,
@@ -440,21 +442,23 @@
 		var actions         = 	'<div class="btn btn-list"><a id="button_add" style="color:white;" class="btn ripple btn-primary"><i class="fas fa-plus-square"></i> დამატება</a><a id="button_trash" style="color:white;" class="btn ripple btn-primary"><i class="fas fa-trash"></i> გამორთვა</a></div>';
 		var editType        =   "popup"; // Two types "popup" and "inline"
 		var itemPerPage     = 	20;
-		var columnsCount    =	5;
+		var columnsCount    =	6;
 		var columnsSQL      = 	[
 									"id:string",
 									"name_geo:string",
 
 									"work_h:string",
 									"phone:string",
-                                    "address:string"
+                                    "address:string",
+									"colr:string"
 								];
 		var columnGeoNames  = 	[
 									"ID", 
 									"პროცედურა",
 									"ფასი",
 									"ხანგძლივობა",
-                                    "მომსახურე პერსონალი"
+                                    "მომსახურე პერსონალი",
+									"ფერი"
 								];
 
 		var showOperatorsByColumns  =   [0,0,0,0,0,0,0,0,0,0]; 
@@ -635,6 +639,7 @@
 		params.name 	    = $("#proc_name").val();
 		params.price 	    = $("#price").val();
 		params.duration		= $("#duration").val();
+		params.color		= $("#color").val();
 
 		var personal = [];
 		$('#personal option:selected').toArray().map(c => personal.push(c.value));

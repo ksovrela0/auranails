@@ -687,7 +687,7 @@
 
 								let height = (u.duration/step_minute)*height_step;
 
-								$(".time_block[personal-id='"+x+"'][hour='"+hour+"'][minute='"+minute+"']").html(	`<div order-id="`+u.order_id+`"  sort="`+u.procedure_id+`" style="width:100%;height: `+height+`px;" class="write_block">
+								$(".time_block[personal-id='"+x+"'][hour='"+hour+"'][minute='"+minute+"']").html(	`<div order-id="`+u.order_id+`" sort="`+u.procedure_id+`" style="width:100%;height: `+height+`px;background-color:`+u.color+`" class="write_block">
 																														<span>`+u.client_name+` `+u.client_phone+`</span>
 																													</div>
 																													<div order-id="`+u.order_id+`" sort="`+u.procedure_id+`" class="order_detail_left">

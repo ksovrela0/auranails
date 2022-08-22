@@ -30,7 +30,8 @@ switch ($act){
                                     procedures.price,
                                     procedures.start_proc AS start_proc,
                                     ROUND(TIME_TO_SEC(procedures.duration)/60) AS duration,
-                                    TIME_FORMAT(ADDTIME(procedures.start_proc, procedures.duration), '%H:%i') AS end_proc
+                                    TIME_FORMAT(ADDTIME(procedures.start_proc, procedures.duration), '%H:%i') AS end_proc,
+                                    procedure.color
                                                     
                                                     
                             FROM procedures
@@ -52,6 +53,7 @@ switch ($act){
                                                                     "price" => $procedure['price'],
                                                                     "duration" => $procedure['duration'],
                                                                     "start_proc" => $procedure['start_proc'],
+                                                                    "color" => $procedure['color'],
                                                                     "end_proc" => $procedure['end_proc']));
             }
 

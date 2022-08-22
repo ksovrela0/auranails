@@ -612,23 +612,7 @@
 			$(document).on('click', '#new_product', function(){
 				new_product();
 			});
-			$(document).on("change", "#procedure_cat", function(){
-				$.ajax({
-					url: "server-side/writes.action.php",
-					type: "POST",
-					data: {
-						act: "get_procedure_data",
-						id: $("#procedure_cat").val()
-					},
-					dataType: "json",
-					success: function(data) {
-						$("#duration").val(data.duration);
-						$("#price").val(data.price);
-						$("#salary_fix").val(0);
-
-					}
-				});
-			});
+			
 			$(document).on('click', '#new_glass', function(){
 				$.ajax({
 					url: "server-side/writes.action.php",
@@ -963,20 +947,7 @@
 					});
 				}
 			}
-			$(document).on('change', '#personal_id', function(){
-				$.ajax({
-					url: "server-side/writes.action.php",
-					type: "POST",
-					data: {
-						act: "get_personal_interest",
-						id: $(this).val()
-					},
-					dataType: "json",
-					success: function(data) {
-						$("#salary_percent").val(data.salary);
-					}
-				});
-			});
+			
 			</script>
 </body>
 

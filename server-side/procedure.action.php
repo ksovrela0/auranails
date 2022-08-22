@@ -109,7 +109,8 @@ switch ($act){
                                 `procedure`.name,
                                 `procedure`.price,
                                 `procedure`.duration,
-                                GROUP_CONCAT(CONCAT(personal.name, ' ', personal.lastname) SEPARATOR ', ') AS 'grafik'
+                                GROUP_CONCAT(CONCAT(personal.name, ' ', personal.lastname) SEPARATOR ', ') AS 'grafik',
+                                CONCAT('<div style=\"width:50px; height:10px; background-color:',procedure.color,';\"></div>')
                         FROM    `procedure`
                         LEFT JOIN    `procedure_personal` ON procedure_personal.procedure_id = `procedure`.id
                         LEFT JOIN		 personal ON personal.id = procedure_personal.personal_id
@@ -147,13 +148,15 @@ switch ($act){
         $name = $_REQUEST['name'];
         $price = $_REQUEST['price'];
         $duration = $_REQUEST['duration'];
+        $color = $_REQUEST['color'];
 
         $personals = $_REQUEST['personal'];
 
         if($id == ''){
             $db->setQuery("INSERT INTO  `procedure` SET name = '$name',
                                                 price = '$price',
-                                                duration = '$duration'");
+                                                duration = '$duration',
+                                                color='$color'");
             $db->execQuery();
 
             $id = $db->getLastId();
@@ -161,7 +164,8 @@ switch ($act){
         else{
             $db->setQuery("UPDATE `procedure` SET name = '$name',
                                                 price = '$price',
-                                                duration = '$duration'
+                                                duration = '$duration',
+                                                color='$color'
                                                 WHERE id = '$id'");
             $db->execQuery();
         }
@@ -193,7 +197,8 @@ function getPers($id){
     $db->setQuery(" SELECT      id,
                                 name,
                                 price,
-                                duration
+                                duration,
+                                color
 
                     FROM        `procedure`
                     WHERE       id = '$id'");
@@ -219,6 +224,10 @@ function getPage($res = ''){
                     <div class="col-sm-4">
                         <label>ხანგძლივობა</label>
                         <input value="'.$res[duration].'" data-nec="0" style="height: 18px; width: 95%;" type="text" id="duration" class="idle" autocomplete="off">
+                    </div>
+                    <div class="col-sm-4">
+                        <label>ფერი</label>
+                        <input value="'.$res[color].'" data-nec="0" style="height: 18px; width: 95%;" type="color" id="color" class="idle" autocomplete="off">
                     </div>
                     <div class="col-sm-12">
                         <label>პერსონალი</label>
