@@ -530,6 +530,10 @@
 
 						if(k == 0 && j%colspan == 0){
 							html += `<td rowspan="4" class="vert_time_block">`+start_hour+`:00</td>`
+							let child = user_index+2;
+							let personal_id = $(".top_header td:nth-child("+child+")").attr('personal-id')
+							html += `<td personal-id="`+personal_id+`" hour="`+start_hour+`" minute="`+start_minute+`" class="time_block left_table_vert"></td>`
+							user_index++;
 						}
 						else{
 							let child = user_index+2;
