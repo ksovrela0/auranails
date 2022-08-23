@@ -8,14 +8,14 @@ $user_id = $_SESSION['USERID'];
 
 switch ($act){
     case 'get_cal_data':
-
+        $date = $_REQUEST['date'];
         $calendar_data = array();
 
         $db->setQuery(" SELECT  personal.id,
                                 CONCAT(personal.name, ' ', personal.lastname) AS fullname
                         FROM    personal
 
-                        WHERE personal.actived = 1 AND DAYOFWEEK(CURDATE()) IN (SELECT week_day_id FROM personal_work_days WHERE actived = 1 AND personal_id = personal.id)
+                        WHERE personal.actived = 1 AND DAYOFWEEK('$date') IN (SELECT week_day_id FROM personal_work_days WHERE actived = 1 AND personal_id = personal.id)
                         ORDER BY personal.id ASC");
 
         $users = $db->getResultArray();
@@ -35,7 +35,7 @@ switch ($act){
                                                     
                                                     
                             FROM procedures
-                            JOIN orders ON orders.id = procedures.order_id AND orders.actived = 1
+                            JOIN orders ON orders.id = procedures.order_id AND orders.actived = 1 AND DATE(orders.write_date) = '$date'
                             JOIN `procedure` ON `procedure`.id = procedures.procedure_id
                             WHERE procedures.user_id = '$user[id]' AND procedures.actived = 1");
 

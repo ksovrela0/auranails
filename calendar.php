@@ -528,8 +528,30 @@
 	</div>
 	<script>
 		$(document).ready(function(){
-			loadCalendar();			
+			var today = new Date();
+			var dd = today.getDate();
+
+			var mm = today.getMonth()+1; 
+			var yyyy = today.getFullYear();
+
+			if(mm < 10){
+				mm = '0'+mm;
+			}
+
+			var op = yyyy+'-'+mm+'-'+dd;
+			$("#cal_date").val(op)
+			$("#cal_date").datetimepicker({
+				timepicker:false,
+				format:'Y-m-d',
+			});
+
+			loadCalendar($("#cal_date").val(),'vertical');			
 		});
+
+		$(document).on('change', '#cal_date', function(){
+			loadCalendar($("#cal_date").val(),'vertical');
+			
+		})
 
 		function generateTDVertical(colspan = 4, user_count){
 			let html;
@@ -641,25 +663,10 @@
 		});
 		
 
-		function loadCalendar(calendar_type = 'vertical'){
+		function loadCalendar(date, calendar_type = 'vertical'){
 			$(".calendar_div").html(``);
 			
-			var today = new Date();
-			var dd = today.getDate();
-
-			var mm = today.getMonth()+1; 
-			var yyyy = today.getFullYear();
-
-			if(mm < 10){
-				mm = '0'+mm;
-			}
-
-			var op = yyyy+'-'+mm+'-'+dd;
-			$("#cal_date").val(op)
-			$("#cal_date").datetimepicker({
-				timepicker:false,
-				format:'Y-m-d',
-			});
+			
 
 			if (calendar_type == 'vertical'){
 				$(".calendar_div").html(`	<div class="data-table-vert col-md-12">
@@ -678,7 +685,7 @@
 					type: "POST",
 					data: {
 						act: "get_cal_data",
-						date: $('#cal_date').val()
+						date: date
 					},
 					dataType: "json",
 					success: function(data) {
