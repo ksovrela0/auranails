@@ -351,7 +351,20 @@
 			color: white;
 			text-align: center;
 			border: 1px solid white;
+
+			position: sticky;
+			
+			left: 0;
+			z-index: 49;
+		
 		}
+
+		/* .top_first{
+			position: sticky;
+			top: 64px;
+			left: 0;
+			z-index: 50;
+		} */
 	</style>
 	<!--[if gte IE 5]><frame></frame><![endif]-->
 	<script src="file:///C:/Users/giorgi/AppData/Local/Temp/Rar$EXa10780.17568/www.spruko.com/demo/dashlead/assets/plugins/ionicons/ionicons/ionicons.z18qlu2u.js" data-resources-url="file:///C:/Users/giorgi/AppData/Local/Temp/Rar$EXa10780.17568/www.spruko.com/demo/dashlead/assets/plugins/ionicons/ionicons/" data-namespace="ionicons"></script>
