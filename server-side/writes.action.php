@@ -170,6 +170,11 @@ switch ($act){
     case 'get_edit_page':
 
         $id = $_REQUEST['id'];
+        $personal_id = $_REQUEST['personal_id'];
+        $hour = $_REQUEST['hour'];
+        $minute = $_REQUEST['minute'];
+        $cal_date = $_REQUEST['cal_date'];
+
         if($id == '' OR !isset($_REQUEST['id'])){
             $db->setQuery("INSERT INTO orders SET datetime = NOW()");
             $db->execQuery();
@@ -180,7 +185,7 @@ switch ($act){
             $db->execQuery();
         }
         
-        $data = array('page' => getPage($id, getWriting($id)));
+        $data = array('page' => getPage($id, getWriting($id), $personal_id, $hour, $minute,$cal_date));
 
     break;
 
@@ -1237,6 +1242,7 @@ function getProduct($id){
 }
 function getProductPage($id, $res = ''){
     GLOBAL $db;
+    
 
     $data = '   <fieldset class="fieldset">
                     <legend>ინფორმაცია</legend>
@@ -1415,7 +1421,7 @@ function getPersonalData($id){
     }
     return $data;
 }
-function getPage($id, $res = ''){
+function getPage($id, $res = '',$personal_id = '', $hour = '', $minute = '', $cal_date = ''){
 
     GLOBAL $db;
 
@@ -1434,14 +1440,14 @@ function getPage($id, $res = ''){
         $male_checked = 'checked';
 
     }
+    $datetime = $res['datetime'];
+    if($res['write_date'] == ''){
+        $datetime = $cal_date;
+    }
 
-
+    
 
     $data .= '
-
-    
-
-    
 
     <fieldset class="fieldset">
         <legend>ინფორმაცია</legend>
@@ -1465,7 +1471,7 @@ function getPage($id, $res = ''){
 
             <div class="col-sm-3">
                 <label>ჩაწერის თარიღი</label>
-                <input value="'.$res['datetime'].'" data-nec="0" style="height: 18px; width: 95%;" type="text" id="order_date" class="idle" autocomplete="off">
+                <input value="'.$datetime.'" data-nec="0" style="height: 18px; width: 95%;" type="text" id="order_date" class="idle" autocomplete="off">
             </div>
             <div class="col-sm-3" style="display:none;">
             <label>დაწყება - დასრულება</label>
@@ -1501,7 +1507,11 @@ function getPage($id, $res = ''){
     
 
     <input type="hidden" id="writing_id" value="'.$id.'">
-    <input type="hidden" id="client_id" value="">
+    <input type="hidden" id="client_id" value="'.$res['client_id'].'">
+
+    <input type="hidden" id="pr_personal" value="'.$personal_id.'">
+    <input type="hidden" id="pr_hour" value="'.$hour.'">
+    <input type="hidden" id="pr_minute" value="'.$minute.'">
 
     ';
 
@@ -1520,6 +1530,7 @@ function getWriting($id){
     $db->setQuery(" SELECT 	orders.id,
                             orders.datetime,
                             orders.client_name,
+                            orders.client_id,
                             orders.client_sex,
                             orders.client_phone,
                             orders.start_proc,

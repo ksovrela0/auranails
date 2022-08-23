@@ -1,16 +1,24 @@
 function new_writing(order_id = '',personal_id='',hour='',minute=''){
+    let cal_date = $("#cal_date").val();
     $.ajax({
         url: "server-side/writes.action.php",
         type: "POST",
         data: {
             act: "get_edit_page",
-            id: order_id
+            id: order_id,
+            personal_id: personal_id,
+            hour: hour,
+            minute: minute,
+            cal_date: cal_date
         },
         dataType: "json",
         success: function(data) {
             $('#get_edit_page').html(data.page);
             $("#personal,#statuses,#cabinet,#client_sex").chosen();
-            $("#order_date").datetimepicker();
+            $("#order_date").datetimepicker({
+                timepicker:false,
+                format:'Y-m-d',
+            });
             /* $(document).on('click', '#sex_set label', function() {
                 var sex_id = $(this).prev().val();
                 var kendo = new kendoUI();
@@ -60,7 +68,8 @@ function new_product(){
         url: "server-side/writes.action.php",
         type: "POST",
         data: {
-            act: "get_product_page"
+            act: "get_product_page",
+            order_id: $("#writing_id").val()
         },
         dataType: "json",
         success: function(data) {
@@ -72,6 +81,21 @@ function new_product(){
                 step: 15,
                 format:'H:i',
             });
+
+            let hour = $("#pr_hour").val();
+            let minute = $("#pr_minute").val();
+
+            if(minute == '0'){
+                minute = '00';
+            }
+
+            let write_time = hour+':'+minute;
+
+            if($("#procedure_start").val() == ''){
+                $("#procedure_start").val(write_time);
+            }
+            
+
             $("#get_product_page").dialog({
                 resizable: false,
                 height: 400,
@@ -252,7 +276,10 @@ $(document).on("dblclick", "#main_div tr.k-state-selected", function() {
         success: function(data) {
             $('#get_edit_page').html(data.page);
             $("#personal,#statuses,#cabinet,#client_sex").chosen();
-            GetDate("order_date");
+            $("#order_date").datetimepicker({
+                timepicker:false,
+                format:'Y-m-d',
+            });
             $("#start_proc,#end_proc").timepicker({
                 uiLibrary: 'bootstrap4'
             });

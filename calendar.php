@@ -334,9 +334,12 @@
 
 		.vertical_td{
 			width: 180px;
+			position: sticky;
+            top: 64px;
+			z-index: 50;
 		}
 
-		.top_header{
+		.top_header td{
 			background: gray;
 			color: white;
 			border: 1px solid white;
@@ -634,6 +637,9 @@
 			var mm = today.getMonth()+1; 
 			var yyyy = today.getFullYear();
 
+			if(mm < 10){
+				mm = '0'+mm;
+			}
 
 			var op = yyyy+'-'+mm+'-'+dd;
 			$("#cal_date").val(op)
