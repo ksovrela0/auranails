@@ -182,7 +182,7 @@ switch ($act){
         $ids = explode(',',$ids);
 
         foreach($ids AS $id){
-            $db->setQuery("UPDATE personal SET actived = 0 WHERE id = '$id'");
+            $db->setQuery("UPDATE `procedure` SET actived = 0 WHERE id = '$id'");
             $db->execQuery();
 
         }
