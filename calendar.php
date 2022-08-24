@@ -626,10 +626,10 @@
 		})
 
 		$(document).on('mouseover', '.time_block',function(){
-			$(this).children().css("display", 'block');
+			$(this).find('p').css("display", 'block');
 		});
 		$(document).on('mouseleave', '.time_block',function(){
-			$(this).children().css("display", 'none');
+			$(this).find('p').css("display", 'none');
 		});
 
 		$(".data-table").on('scroll', function(e) { 
