@@ -354,7 +354,7 @@
 
 			position: sticky;
 			
-			left: 239px;
+			left: 0px;
 			z-index: 49;
 		
 		}
@@ -631,6 +631,10 @@
 		$(document).on('mouseleave', '.time_block',function(){
 			$(this).find('p').css("display", 'none');
 		});
+
+		$(document).on('click', '#mainSidebarToggle', function(){
+			$(".vert_time_block").css("left","0px")
+		})
 
 		$(".data-table").on('scroll', function(e) { 
 			var ele = $(e.currentTarget);
