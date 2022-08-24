@@ -565,24 +565,30 @@
 					html += `<tr>`
 					let user_index = 0;
 					for(let k = 0; k<=user_count-1;k++){
-
+						if(start_minute == '0'){
+							start_minute = '00';
+						}
 						if(k == 0 && j%colspan == 0){
 							html += `<td rowspan="4" class="vert_time_block">`+start_hour+`:00</td>`
 							let child = user_index+2;
 							let personal_id = $(".top_header td:nth-child("+child+")").attr('personal-id')
-							html += `<td personal-id="`+personal_id+`" hour="`+start_hour+`" minute="`+start_minute+`" class="time_block left_table_vert"></td>`
+							html += `<td personal-id="`+personal_id+`" hour="`+start_hour+`" minute="`+start_minute+`" class="time_block left_table_vert"><p style="z-index:1;width: fit-content;
+    font-size: 12px;
+    color: grey;">`+start_hour+`:`+start_minute+`</p></td>`
 							user_index++;
 						}
 						else{
 							let child = user_index+2;
 							let personal_id = $(".top_header td:nth-child("+child+")").attr('personal-id')
-							html += `<td personal-id="`+personal_id+`" hour="`+start_hour+`" minute="`+start_minute+`" class="time_block left_table_vert"></td>`
+							html += `<td personal-id="`+personal_id+`" hour="`+start_hour+`" minute="`+start_minute+`" class="time_block left_table_vert"><p style="z-index:1;width: fit-content;
+    font-size: 12px;
+    color: grey;">`+start_hour+`:`+start_minute+`</p></td>`
 							user_index++;
 						}
 						
 					}
 					html += `</tr>`;
-					start_minute = start_minute+15;
+					start_minute = parseInt(start_minute)+15;
 				}
 				start_hour++;
 			}
