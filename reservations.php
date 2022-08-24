@@ -192,17 +192,17 @@
 				<!-- Page Header -->
 				<div class="page-header">
 					<div>
-						<h2 class="main-content-title tx-24 mg-b-5">ფინანსები</h2>
+						<h2 class="main-content-title tx-24 mg-b-5">რეზერვები</h2>
 						<ol class="breadcrumb">
-							<li class="breadcrumb-item"><a href="#">ფინანსები</a></li>
-							<li class="breadcrumb-item active" aria-current="page">ფინანსური სტატისტიკა</li>
+							<li class="breadcrumb-item"><a href="#">ჩაწერები</a></li>
+							<li class="breadcrumb-item active" aria-current="page">რეზერვები</li>
 						</ol>
 					</div>
 				</div>
 				<!-- End Page Header -->
 				<!-- Row -->
 				<div class="row">
-					<div id="products"></div>
+					<div id="reserve_div"></div>
 				</div>
 				<!-- End Row -->
 			</div>
@@ -293,130 +293,14 @@
 	<!-- Jquery js-->
 	
 	<div class="main-navbar-backdrop"></div>
-	<div title="პროდუქცია" id="get_edit_page">
-		
-	</div>
+	<div title="პროდუქცია" id="get_edit_page"></div>
+	<div title="დამატებითი ინგრედიენტები" id="ingridient_page"></div>
 	<script>
-	var aJaxURL = "server-side/products.action.php";
-	$(document).on('click','#button_add',function(){
-		$.ajax({
-			url: aJaxURL,
-			type: "POST",
-			data: {
-				act: "get_add_page"
-			},
-			dataType: "json",
-			success: function(data){
-				$('#get_edit_page').html(data.page);
-				$("#get_edit_page").dialog({
-					resizable: false,
-					height: "auto",
-					width: 900,
-					modal: true,
-					buttons: {
-						"შენახვა": function() {
-							save_product();
-						},
-						'დახურვა': function() {
-							$( this ).dialog( "close" );
-						}
-					}
-				});
-			}
-		});
-	});
-	$(document).on('click','#button_trash',function(){
-		var removeIDS = [];
-		var entityGrid = $("#products").data("kendoGrid");
-		var rows = entityGrid.select();
-		rows.each(function(index, row) {
-			var selectedItem = entityGrid.dataItem(row);
-			// selectedItem has EntityVersionId and the rest of your model
-			removeIDS.push(selectedItem.id);
-		});
-		$.ajax({
-			url: aJaxURL,
-			type: "POST",
-			data: "act=disable&id=" + removeIDS,
-			dataType: "json",
-			success: function (data) {
-				$("#products").data("kendoGrid").dataSource.read();
-			}
-		});
-	});
+	
 	$( document ).ready(function() {
-		LoadKendoTable_incomming()
+		LoadKendoTable_reserve()
 	});
-	function LoadKendoTable_incomming(hidden){
-
-		//KendoUI CLASS CONFIGS BEGIN
-		var aJaxURL	        =   "server-side/finance.action.php";
-		var gridName        = 	'products';
-		var actions         = 	'';
-		var editType        =   "popup"; // Two types "popup" and "inline"
-		var itemPerPage     = 	20;
-		var columnsCount    =	7;
-		var columnsSQL      = 	[
-									"id:string",
-									"tran_type:string",
-									"datetime:string",
-									"user:string",
-									"amount:string",
-									"order:string",
-									"status:string"
-								];
-		var columnGeoNames  = 	[
-									"ID", 
-									"ტრანზაქციის ტიპი",
-									"თარიღი",
-									"ტრანზ.ავტორი",
-									"თანხა",
-									"შეკვეთა",
-									"სტატუსი"
-								];
-
-		var showOperatorsByColumns  =   [0,0,0,0,0,0,0,0]; 
-		var selectors               =   [0,0,0,0,0,0,0,0]; 
-
-		var locked                  =   [0,0,0,0,0,0,0,0];
-		var lockable                =   [0,0,0,0,0,0,0,0];
-
-		var filtersCustomOperators = '{"date":{"start":"-დან","ends":"-მდე","eq":"ზუსტი"}, "number":{"start":"-დან","ends":"-მდე","eq":"ზუსტი"}}';
-		//KendoUI CLASS CONFIGS END
-			
-		const kendo = new kendoUI();
-		kendo.loadKendoUI(aJaxURL,'get_list',itemPerPage,columnsCount,columnsSQL,gridName,actions,editType,columnGeoNames,filtersCustomOperators,showOperatorsByColumns,selectors,hidden, 1, locked, lockable);
-
-	}
-	$(document).on('click','#upload_img',function(){
-		$("#upload_back_img").trigger('click');
-	});
-	function save_product(){
-		let params 				= new Object;
-		params.act 				= 'save_product';
-		params.id 				= $("#product_id").val();
-		params.title_geo 		= $("#title_geo").val();
-		params.title_rus 		= $("#title_rus").val();
-		params.title_eng		= $("#title_eng").val();
-
-		params.poduct_category 	= $("#poduct_category").val();
-		params.price 			= $("#price").val();
-		params.price_sale		= $("#price_sale").val();
-		params.ingredients_geo 	= $("#ingredients_geo").val();
-		params.ingredients_rus 	= $("#ingredients_rus").val();
-		params.ingredients_eng	= $("#ingredients_eng").val();
-		$.ajax({
-			url: aJaxURL,
-			type: "POST",
-			data: params,
-			dataType: "json",
-			success: function(data){
-				$("#products").data("kendoGrid").dataSource.read();
-				$('#get_edit_page').dialog("close");
-			}
-		});
-		
-	}
+	
 	</script>
 </body>
 

@@ -25,8 +25,8 @@
 <!-- Switcher css -->
 <link href="assets/switcher/css/switcher.css" rel="stylesheet">
 <link href="assets/switcher/demo.css" rel="stylesheet">
-<link href="assets/css/kendoUI/kendo.common.min.css" rel="stylesheet" type="text/css"/>
-<link href="assets/css/kendoUI/kendo.default.min.css" rel="stylesheet" type="text/css"/>
+<!-- <link href="assets/css/kendoUI/kendo.common.min.css" rel="stylesheet" type="text/css"/> -->
+<link href="assets/css/kendoUI/kendo.bootstrap-v4.min.css" rel="stylesheet" type="text/css"/>
 
 <link href="assets/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
 <link href="assets/plugins/jquery-ui/chosen.css" rel="stylesheet" type="text/css"/>
@@ -157,7 +157,7 @@
 
 <script type="text/javascript" language="javascript" src="assets/plugins/jquery-ui/chosen.jquery.js"></script>
 <script type="text/javascript" language="javascript" src="assets/plugins/jquery-ui/jquery-ui.min.js"></script>
-<script type="text/javascript" language="javascript" src="assets/js/kendoUI/kendo.all.min.js"></script>
+<script type="text/javascript" language="javascript" src="assets/js/kendoUI/kendo.all.min.js?v1.2"></script>
 <script type="text/javascript" language="javascript" src="assets/js/kendoUI/kendo.main.class.js"></script>
 <script type="text/javascript" language="javascript" src="assets/js/kendoUI/pako_deflate.min.js"></script>  
 

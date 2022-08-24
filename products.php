@@ -160,7 +160,7 @@
 		position: relative!important;
 		vertical-align: middle !important;
 		cursor: default!important;
-		padding: 0!important;
+		
 	}
 	.chosen-container {
 		width: 95% !important;
