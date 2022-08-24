@@ -77,7 +77,7 @@
 .side-header{
 	position:sticky;
 	width: 100%;
-    z-index: 999;
+    z-index: 80;
     border-bottom: 1px solid #e1e6f1;
 	box-shadow: none;
 }

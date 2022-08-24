@@ -50623,3 +50623,21 @@ input[type="search"]::-webkit-search-cancel-button {
 	font-size: 16px;
     font-weight: 700;
 }
+
+.del_procedure{
+	border: 1px solid black;
+    width: fit-content;
+    padding: 7px;
+    font-size: 18px;
+    color: #fff;
+    background-color: red;
+    cursor: pointer;
+    margin-left: 20px;
+    background: radial-gradient(#ff0005 0.3%, #a30707 90%);
+    border-radius: 15px;
+    box-shadow: 2px 1px black;
+}
+
+.del_procedure:hover{
+	box-shadow: unset;
+}

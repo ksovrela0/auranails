@@ -480,51 +480,166 @@ switch ($act){
         }
 
     break;
-
-    case 'save_procedure':
+    case 'add_to_reserve':
 
         $id          = $_REQUEST['proc_id'];
         $order_id    = $_REQUEST['order_id'];
         $procedure_cat_id    = $_REQUEST['procedure_cat_id'];
         $personal_id    = $_REQUEST['personal_id'];
-        $duration    = $_REQUEST['duration'];
+        $duration    = $_REQUEST['duration'].':00';
         $price    = $_REQUEST['price'];
         $salary_percent    = $_REQUEST['salary_percent'];
-        $start_proc    = $_REQUEST['start_proc'];
+        $start_proc    = $_REQUEST['start_proc'].':00';
 
-        $db->setQuery(" SELECT  COUNT(*) AS cc
+        $order_date    = $_REQUEST['order_date'];
+
+        $db->setQuery(" SELECT  COUNT(*) AS cc,
+                                procedures.start_proc,
+                                procedures.duration,
+                                procedures.user_id
                         FROM    procedures
                         WHERE   id = '$id' AND actived = 1");
         $isset = $db->getResultArray();
-
+        
         if($isset['result'][0]['cc'] == 0){
-            $db->setQuery("INSERT INTO procedures SET
-                                            id = '$id',
-                                            user_id='$personal_id',
-                                            datetime=NOW(),
-                                            order_id='$order_id',
-                                            procedure_id='$procedure_cat_id',
-                                            duration='$duration',
-                                            price='$price',
-                                            start_proc='$start_proc',
-                                            salary_percent='$salary_percent'");
-
-            $db->execQuery();
-            $data['error'] = '';
-        }
-
-        else{
-            $db->setQuery("UPDATE procedures    SET     user_id='$personal_id',
+            
+            $db->setQuery("INSERT INTO procedures SET   id = '$id',
+                                                        user_id='$personal_id',
                                                         datetime=NOW(),
                                                         order_id='$order_id',
                                                         procedure_id='$procedure_cat_id',
                                                         duration='$duration',
                                                         price='$price',
                                                         start_proc='$start_proc',
-                                                        salary_percent='$salary_percent'
-                                                WHERE id='$id'");
+                                                        salary_percent='$salary_percent',
+                                                        reservation = 1");
+
+            $db->execQuery();
+
+            $data['error'] = '';
+        }
+
+        else{
+            
+            $db->setQuery("UPDATE procedures    SET     user_id='$personal_id',
+                                                    datetime=NOW(),
+                                                    order_id='$order_id',
+                                                    procedure_id='$procedure_cat_id',
+                                                    duration='$duration',
+                                                    price='$price',
+                                                    start_proc='$start_proc',
+                                                    salary_percent='$salary_percent',
+                                                    reservation = 1
+                        WHERE id='$id'");
+
             $db->execQuery();
             $data['error'] = '';
+                
+            
+        }
+
+    break;
+
+    case 'save_procedure':
+
+        $id          = $_REQUEST['proc_id'];
+        $order_id    = $_REQUEST['order_id'];
+        $procedure_cat_id    = $_REQUEST['procedure_cat_id'];
+        $personal_id    = $_REQUEST['personal_id'];   
+        $price    = $_REQUEST['price'];
+        $salary_percent    = $_REQUEST['salary_percent'];
+        $order_date    = $_REQUEST['order_date'];
+
+        $start_proc     = $_REQUEST['start_proc'];
+        $duration       = $_REQUEST['duration'];
+
+        $db->setQuery(" SELECT  COUNT(*) AS cc,
+                                TIME_FORMAT(procedures.start_proc, '%H:%i') AS start_proc,
+                                TIME_FORMAT(procedures.duration, '%H:%i') AS duration,
+                                procedures.user_id,
+                                procedures.reservation
+                        FROM    procedures
+                        WHERE   id = '$id' AND actived = 1");
+        $isset = $db->getResultArray();
+
+        if($isset['result'][0]['cc'] == 0){
+            
+            $db->setQuery(" SELECT  COUNT(*) AS cc
+                            FROM    procedures
+                            JOIN    orders ON orders.id = procedures.order_id AND orders.actived = 1
+                            WHERE   procedures.actived = 1 AND procedures.status_id IN (1,2) AND DATE(orders.write_date) = '$order_date' AND procedures.reservation = 0 AND procedures.user_id = '$personal_id'
+                            AND     ('$start_proc' BETWEEN procedures.start_proc AND ADDTIME(procedures.start_proc,procedures.duration) 
+                                    OR ADDTIME('$start_proc',TIMEDIFF('$duration','00:01')) BETWEEN procedures.start_proc AND ADDTIME(procedures.start_proc,procedures.duration) 
+                                    OR procedures.start_proc BETWEEN '$start_proc' AND ADDTIME('$start_proc',TIMEDIFF('$duration','00:01')))");
+            $existedProcedures = $db->getResultArray()['result'][0]['cc'];
+            
+            if($existedProcedures > 0){
+
+                $data['error'] = 'არჩეულ დროზე პერსონალი დაკავებულია, გთხოვთ მიუთითოთ სხვა დრო ან ჩაწეროთ რეზერვში. გსურთ ჩაწერის რეზერვში ჩასმა?';
+            }
+            else{
+                $db->setQuery("INSERT INTO procedures SET   id = '$id',
+                                                            user_id='$personal_id',
+                                                            datetime=NOW(),
+                                                            order_id='$order_id',
+                                                            procedure_id='$procedure_cat_id',
+                                                            duration='$duration',
+                                                            price='$price',
+                                                            start_proc='$start_proc',
+                                                            salary_percent='$salary_percent'");
+
+                $db->execQuery();
+                $data['error'] = '';
+            }
+            
+        }
+
+        else{
+            if($isset['result'][0]['reservation'] == 1 OR ($start_proc == $isset['result'][0]['start_proc'] && $duration == $isset['result'][0]['duration'] && $personal_id == $isset['result'][0]['user_id'])){
+                $db->setQuery("UPDATE procedures    SET     user_id='$personal_id',
+                                                            datetime=NOW(),
+                                                            order_id='$order_id',
+                                                            procedure_id='$procedure_cat_id',
+                                                            duration='$duration',
+                                                            price='$price',
+                                                            start_proc='$start_proc',
+                                                            salary_percent='$salary_percent'
+                                WHERE id='$id'");
+                $db->execQuery();
+                $data['error'] = '';
+            }
+            else{
+
+                $db->setQuery(" SELECT  COUNT(*) AS cc
+                                FROM    procedures
+                                JOIN    orders ON orders.id = procedures.order_id AND orders.actived = 1
+                                WHERE   procedures.actived = 1 AND procedures.status_id IN (1,2) AND DATE(orders.write_date) = '$order_date' AND procedures.reservation = 0 AND procedures.user_id = '$personal_id'
+                                AND     ('$start_proc' BETWEEN procedures.start_proc AND ADDTIME(procedures.start_proc,procedures.duration) 
+                                        OR ADDTIME('$start_proc',TIMEDIFF('$duration','00:01')) BETWEEN procedures.start_proc AND ADDTIME(procedures.start_proc,procedures.duration) 
+                                        OR procedures.start_proc BETWEEN '$start_proc' AND ADDTIME('$start_proc',TIMEDIFF('$duration','00:01')))");
+                $existedProcedures = $db->getResultArray()['result'][0]['cc'];
+                
+                if($existedProcedures > 0){
+
+                    $data['error'] = 'არჩეულ დროზე პერსონალი დაკავებულია, გთხოვთ მიუთითოთ სხვა დრო ან ჩაწეროთ რეზერვში. გსურთ ჩაწერის რეზერვში ჩასმა?';
+                }
+                else{
+                    $db->setQuery("UPDATE procedures    SET     user_id='$personal_id',
+                                                            datetime=NOW(),
+                                                            order_id='$order_id',
+                                                            procedure_id='$procedure_cat_id',
+                                                            duration='$duration',
+                                                            price='$price',
+                                                            start_proc='$start_proc',
+                                                            salary_percent='$salary_percent'
+                                WHERE id='$id'");
+
+                    $db->execQuery();
+                    $data['error'] = '';
+                }
+                
+            }
+            
         }
 
     break;
@@ -641,6 +756,18 @@ switch ($act){
 
             foreach($ids AS $id){
                 $db->setQuery("UPDATE procedures SET actived = 0 WHERE id = '$id'");
+                $db->execQuery();
+    
+            }
+        }
+
+        else if($type == 'procedure'){
+            $ids = explode(',',$ids);
+
+
+
+            foreach($ids AS $id){
+                $db->setQuery("UPDATE procedures SET status_id = 3 WHERE id = '$id'");
                 $db->execQuery();
     
             }
@@ -780,11 +907,14 @@ switch ($act){
 
 						$g = array('field'=>$columns[$j],'encoded'=>false,'title'=>$columnNames[0][$a],'filterable'=>array('multi'=>true,'search' => true), 'width' => '5%');
 
-					}elseif($columns[$j] == "id2" OR $columns[$j] == "write_date" OR $columns[$j] == "impuls_qty" ){
+					}elseif($columns[$j] == "write_date" OR $columns[$j] == "impuls_qty" ){
 
 						$g = array('field'=>$columns[$j], 'hidden' => true,'encoded'=>false,'title'=>$columnNames[0][$a],'filterable'=>array('multi'=>true,'search' => true), 'width' => 100);
 
 					}
+                    elseif($columns[$j] == "id2" OR $columns[$j] == "price"){
+                        $g = array('field'=>$columns[$j],'encoded'=>false,'title'=>$columnNames[0][$a],'filterable'=>array('multi'=>true,'search' => true), 'width' => 60);
+                    }
                     elseif($columns[$j] == "inc_date"){
 
 						$g = array('field'=>$columns[$j],'encoded'=>false,'title'=>$columnNames[0][$a],'filterable'=>array('multi'=>true,'search' => true), 'width' => 130);
@@ -975,11 +1105,15 @@ switch ($act){
                                 `procedures`.start_proc,
                                 `procedures`.duration,
                                 CONCAT(personal.name, ' ', personal.lastname) AS name,
-                                procedures.price
+                                procedures.price,
+                                IF(procedures.reservation = 1,'<p style=\"color:red;margin:0;\">რეზერვში</p>','არა'),
+                                order_status.name,
+                                IF(procedures.status_id = 1,CONCAT('<div data-id=\"',procedures.id,'\" class=\"del_procedure\"> გაუქმება</div>'),'')
 
                         FROM 		procedures
                         JOIN		`procedure` ON `procedure`.id = procedures.procedure_id
                         JOIN		personal ON personal.id = procedures.user_id
+                        JOIN        order_status ON order_status.id = procedures.status_id
                         WHERE 	procedures.actived = 1 AND procedures.order_id = '$order_id'
                         ORDER BY procedures.id");
         $result = $db->getKendoList($columnCount, $cols);
@@ -1225,6 +1359,8 @@ function getProduct($id){
                             procedure_id,
                             duration,
                             start_proc,
+                            TIME_FORMAT(procedures.start_proc, '%H:%i') AS start_proc,
+                            TIME_FORMAT(procedures.duration, '%H:%i') AS duration,
                             price,
                             salary_fix,
                             salary_percent,

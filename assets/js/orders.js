@@ -159,9 +159,9 @@ function LoadKendoTable_product(hidden) {
     var actions = '<div id="new_product">დამატება</div><div id="copy_product">კოპირება</div><div id="del_product"> წაშლა</div>';
     var editType = "popup"; // Two types "popup" and "inline"
     var itemPerPage = 100;
-    var columnsCount = 6;
-    var columnsSQL = ["id2:string", "name_product:string", "proc_start:string", "proc_duration:string", "picture:string", "action:string"];
-    var columnGeoNames = ["ID", "დასახელება", "დაწყება", "ხანგძლივობა", "შემსრულებელი", "ფასი"];
+    var columnsCount = 9;
+    var columnsSQL = ["id2:string", "name_product:string", "proc_start:string", "proc_duration:string", "picture:string", "price:string", "reservation:string", "proc_status:string", "action:string"];
+    var columnGeoNames = ["ID", "დასახელება", "დაწყება", "ხანგძლივობა", "შემსრულებელი", "ფასი", "რეზერვი", "სტაატუსი", "ქმედება"];
     var showOperatorsByColumns = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     var selectors = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     var locked = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -213,7 +213,7 @@ function save_order() {
                 $('#get_edit_page').dialog("close");
 
                 try{
-                    loadCalendar();
+                    loadCalendar($("#cal_date").val(),'vertical');
                 }
                 catch{
 
@@ -233,6 +233,7 @@ function save_product() {
     params.personal_id = $("#personal_id").val();
     params.duration = $("#duration").val();
     params.price = $("#price").val();
+    params.order_date = $("#order_date").val();
     params.salary_percent = $("#salary_percent").val();
     params.start_proc = $("#procedure_start").val();
 
@@ -246,14 +247,45 @@ function save_product() {
             data: params,
             dataType: "json",
             success: function(data) {
-                $("#product_div").data("kendoGrid").dataSource.read();
-                $('#get_product_page').dialog("close");
-                try{
-                    loadCalendar();
+                if(data.error != ''){
+                    let addToReserve = confirm(data.error);
+
+                    if(addToReserve){
+                        params.act = 'add_to_reserve';
+                        $.ajax({
+                            url: "server-side/writes.action.php",
+                            type: "POST",
+                            data: params,
+                            dataType: "json",
+                            success: function(data) {
+                                if(data.error == ''){
+                                    alert("პროცედურა დამატებულია რეზერვში");
+
+                                    $("#product_div").data("kendoGrid").dataSource.read();
+                                    $('#get_product_page').dialog("close");
+                                    try{
+                                        loadCalendar($("#cal_date").val(),'vertical');
+                                    }
+                                    catch{
+                                        
+                                    }
+
+                                }
+                            }
+                        });
+                    }
                 }
-                catch{
-                    
+                else{
+                    $("#product_div").data("kendoGrid").dataSource.read();
+                    $('#get_product_page').dialog("close");
+                    try{
+                        loadCalendar($("#cal_date").val(),'vertical');
+                    }
+                    catch{
+                        
+                    }
                 }
+                
             }
         });
     }
@@ -383,5 +415,32 @@ $(document).on('click', '#del_product', function() {
             });
         }
         
+    }
+});
+
+$(document).on('click', '.del_procedure', function(){
+    let proc_id = $(this).attr('data-id');
+
+    var ask = confirm("ნამდვილად გსურთ პროცედურის გაუქმება?");
+    if(ask){
+        $.ajax({
+            url: "server-side/writes.action.php",
+            type: "POST",
+            data: {
+                act: "disable",
+                type: "procedure",
+                id: proc_id
+            },
+            dataType: "json",
+            success: function(data) {
+                $("#product_div").data("kendoGrid").dataSource.read();
+                try{
+                    loadCalendar($("#cal_date").val(),'vertical');
+                }
+                catch{
+                    
+                }
+            }
+        });
     }
 });

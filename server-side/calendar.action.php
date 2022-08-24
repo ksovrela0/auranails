@@ -37,7 +37,7 @@ switch ($act){
                             FROM procedures
                             JOIN orders ON orders.id = procedures.order_id AND orders.actived = 1 AND DATE(orders.write_date) = '$date'
                             JOIN `procedure` ON `procedure`.id = procedures.procedure_id
-                            WHERE procedures.user_id = '$user[id]' AND procedures.actived = 1");
+                            WHERE procedures.user_id = '$user[id]' AND procedures.actived = 1 AND procedures.status_id IN (1,2) AND procedures.reservation = 0");
 
             $procedures = $db->getResultArray();
             $calendar_data[$i]['procedures'] = array();
