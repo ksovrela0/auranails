@@ -537,7 +537,39 @@ $(document).on('click', '#take_from_reserve', function(){
                     modal: true,
                     buttons: {
                         'გააქტიურება': function() {
-                            alert(213)
+                            $.ajax({
+                                url: "server-side/writes.action.php",
+                                type: "POST",
+                                data: {
+                                    act: "take_from_reserve",
+                                    proc_id: $("#proc_id_reserve").val(),
+                                    personal_id: $("#personal_id_reserve").val(),
+                                    write_date: $("#write_date_reserve").val(),
+                                    start_proc: $("#start_proc_reserve").val(),
+                                    duration: $("#duration_reserve").val(),
+                                    order_id: $("#order_id_reserve").val(),
+                                },
+                                dataType: "json",
+                                success: function(data) {
+                                    if(data.error == ''){
+                                        $("#get_reserve_from_page").dialog("close");
+                                        $("#product_div").data("kendoGrid").dataSource.read();
+                                        $("#reserve_div").data("kendoGrid").dataSource.read();
+                                        try{
+                                            loadCalendar($("#cal_date").val(),'vertical');
+                                        }
+                                        catch{
+                                            
+                                        }
+                                    }
+                                    else{
+                                        alert(data.error)
+                                    }
+                                    
+
+                                    
+                                }
+                            });
                         },
                         'დახურვა': function() {
                             $(this).dialog("close");

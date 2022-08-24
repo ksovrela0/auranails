@@ -564,7 +564,44 @@ switch ($act){
         }
 
     break;
+    case 'take_from_reserve':
+        $id             = $_REQUEST['proc_id'];
+        $order_id       = $_REQUEST['order_id'];
+        $personal_id    = $_REQUEST['personal_id'];  
+        $start_proc     = $_REQUEST['start_proc'];
+        $order_date     = $_REQUEST['write_date'];
+        $duration     = $_REQUEST['duration'];
 
+
+        $db->setQuery(" SELECT  COUNT(*) AS cc
+                        FROM    procedures
+                        JOIN    orders ON orders.id = procedures.order_id AND orders.actived = 1
+                        WHERE   procedures.actived = 1 AND procedures.status_id IN (1,2) AND DATE(orders.write_date) = '$order_date' AND procedures.reservation = 0 AND procedures.user_id = '$personal_id'
+                        AND     (ADDTIME('$start_proc','00:01') BETWEEN procedures.start_proc AND ADDTIME(procedures.start_proc,procedures.duration) 
+                                OR ADDTIME(ADDTIME('$start_proc','00:01'),TIMEDIFF('$duration','00:01')) BETWEEN procedures.start_proc AND ADDTIME(procedures.start_proc,procedures.duration) 
+                                OR procedures.start_proc BETWEEN ADDTIME('$start_proc','00:01') AND ADDTIME(ADDTIME('$start_proc','00:01'),TIMEDIFF('$duration','00:01')))");
+        $existedProcedures = $db->getResultArray()['result'][0]['cc'];
+        
+        if($existedProcedures > 0){
+
+            $data['error'] = 'არჩეულ დროზე პერსონალი დაკავებულია, გთხოვთ მიუთითოთ სხვა დრო';
+        }
+        else{
+            $db->setQuery("UPDATE procedures    SET     user_id='$personal_id',
+                                                        datetime=NOW(),
+                                                        reservation=0,
+                                                        start_proc='$start_proc'
+                            WHERE id='$id'");
+            $db->execQuery();
+
+            $db->setQuery("UPDATE orders    SET     write_date='$order_date'
+                                            WHERE id='$order_id'");
+            $db->execQuery();
+            $data['error'] = '';
+        }
+
+
+        break;
     case 'save_procedure':
 
         $id          = $_REQUEST['proc_id'];
@@ -1637,9 +1674,10 @@ function getReserveFromPage($res = ''){
                 <input value="'.$res['start_proc'].'" data-nec="0" style="height: 18px; width: 95%;" type="text" id="start_proc_reserve" class="idle" autocomplete="off">
             </div>
         </div>
-
     </fieldset>
-
+    <input type="hidden" id="proc_id_reserve" value="'.$res['id'].'">
+    <input type="hidden" id="duration_reserve" value="'.$res['duration'].'">
+    <input type="hidden" id="order_id_reserve" value="'.$res['order_id'].'">
     ';
 
 
@@ -1770,8 +1808,10 @@ function getReserve($id){
     GLOBAL $db;
     $db->setQuery(" SELECT 	procedures.id,
                             procedures.user_id,
+                            TIME_FORMAT(procedures.duration, '%H:%i') AS duration,
                             TIME_FORMAT(procedures.start_proc, '%H:%i') AS start_proc,
-                            orders.write_date
+                            orders.write_date,
+                            orders.id AS order_id
                         
                             
                     FROM 	procedures
