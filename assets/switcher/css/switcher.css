@@ -236,7 +236,6 @@ a.evo-hist {
 	box-shadow: none !important;
 }
 .demo_changer .button {
-	-moz-user-select: none;
 	background-image: none;
 	border: 1px solid #ddd;
 	border-radius: 3px;

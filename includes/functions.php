@@ -9,8 +9,8 @@
 <!---Falg-icons css-->
 <link href="assets/plugins/flag-icon-css/css/flag-icon.min.css" rel="stylesheet">
 <!---Style css-->
-<link href="assets/css/style.css?v=1.6" rel="stylesheet">
-<link href="assets/css/custom-style.css?v=1.4" rel="stylesheet">
+<link href="assets/css/style.css?v=1.8" rel="stylesheet">
+<link href="assets/css/custom-style.css?v=1.67" rel="stylesheet">
 <link href="assets/css/skins.css" rel="stylesheet">
 <link href="assets/css/dark-style.css" rel="stylesheet">
 <link href="assets/css/custom-dark-style.css" rel="stylesheet">
@@ -23,7 +23,7 @@
 <!---Sidemenu css-->
 <link href="assets/plugins/sidemenu/closed-sidemenu.css?v=1.6" rel="stylesheet">
 <!-- Switcher css -->
-<link href="assets/switcher/css/switcher.css" rel="stylesheet">
+<link href="assets/switcher/css/switcher.css?v=1.5" rel="stylesheet">
 <link href="assets/switcher/demo.css" rel="stylesheet">
 <!-- <link href="assets/css/kendoUI/kendo.common.min.css" rel="stylesheet" type="text/css"/> -->
 <link href="assets/css/kendoUI/kendo.bootstrap-v4.min.css" rel="stylesheet" type="text/css"/>
@@ -162,7 +162,7 @@
 <script type="text/javascript" language="javascript" src="assets/js/kendoUI/pako_deflate.min.js"></script>  
 
 <script type="text/javascript" language="javascript" src="assets/js/timepicker.js"></script>
-<script type="text/javascript" language="javascript" src="assets/js/orders.js?v=2.1"></script>
+<script type="text/javascript" language="javascript" src="assets/js/orders.js?v=2.2"></script>
 
 <script type="text/javascript" language="javascript" src="assets/js/jquery.datetimepicker.full.min.js"></script> 
 

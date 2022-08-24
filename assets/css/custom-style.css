@@ -1390,10 +1390,7 @@ select.form-control.select-sm {
 }
 /*----Custom Switch-----*/
 .custom-switch {
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
+	
 	cursor: default;
 	display: -ms-inline-flexbox;
 	display: inline-flex;
@@ -1494,10 +1491,7 @@ select.form-control.select-sm {
 	cursor: pointer;
 	border-radius: 3px;
 	color: #686868;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
+	
 }
 .selectgroup-button-icon {
 	padding-left: .5rem;
@@ -1595,10 +1589,7 @@ select.form-control.select-sm {
     display: inline-flex;
     cursor: default;
     font-weight: 400;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+
 }
 .tag-pill {
     padding-right: 0.6em;
@@ -1650,11 +1641,7 @@ select.form-control.select-sm {
 	top: 0;
 	font-weight: bold;
 	left: 10px;
-	-webkit-user-select: none;
-	-khtml-user-select : none;
-	-moz-user-select: none;
-	-o-user-select : none;
-	user-select: none;
+
 }
 .mapael .zoomReset {
 	top: 10px;

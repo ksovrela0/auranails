@@ -518,6 +518,30 @@ switch ($act){
         }
 
     break;
+    case 'get_list_clients':
+        $id          =      $_REQUEST['hidden'];
+        $columnCount = 		$_REQUEST['count'];
+		$cols[]      =      $_REQUEST['cols'];
+
+
+
+            $db->setQuery("SELECT 	clients.id,
+                                    clients.client_name,
+                                    clients.client_phone,
+                                    sex.name,
+                                    clients.datetime
+                                    
+                                        
+                            FROM 	clients
+                            JOIN    sex ON sex.id = clients.client_sex
+                            WHERE 	clients.actived = 1");
+
+
+
+        $result = $db->getKendoList($columnCount, $cols);
+
+        $data = $result;
+        break;
     case 'save_new_client':
         $id             = $_REQUEST['id'];
         $client_name    = $_REQUEST['client_name'];
@@ -532,6 +556,7 @@ switch ($act){
         if($isset['result'][0]['cc'] == 0){
             $db->setQuery("INSERT INTO clients SET
                                                 id = '$id',
+                                                datetime=NOW(),
                                                 client_name='$client_name',
                                                 client_phone='$client_phone',
                                                 client_sex='$client_sex'");
@@ -541,8 +566,7 @@ switch ($act){
         }
 
         else{
-            $db->setQuery("UPDATE clients SET user_id='$user_id',
-                                                client_name='$client_name',
+            $db->setQuery("UPDATE clients SET   client_name='$client_name',
                                                 client_phone='$client_phone',
                                                 client_sex='$client_sex'
                             WHERE id='$id'");
