@@ -9,7 +9,7 @@
 <!---Falg-icons css-->
 <link href="assets/plugins/flag-icon-css/css/flag-icon.min.css" rel="stylesheet">
 <!---Style css-->
-<link href="assets/css/style.css?v=1.5" rel="stylesheet">
+<link href="assets/css/style.css?v=1.6" rel="stylesheet">
 <link href="assets/css/custom-style.css?v=1.4" rel="stylesheet">
 <link href="assets/css/skins.css" rel="stylesheet">
 <link href="assets/css/dark-style.css" rel="stylesheet">

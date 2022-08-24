@@ -572,17 +572,13 @@
 							html += `<td rowspan="4" class="vert_time_block">`+start_hour+`:00</td>`
 							let child = user_index+2;
 							let personal_id = $(".top_header td:nth-child("+child+")").attr('personal-id')
-							html += `<td personal-id="`+personal_id+`" hour="`+start_hour+`" minute="`+start_minute+`" class="time_block left_table_vert"><p style="z-index:1;width: fit-content;
-    font-size: 12px;
-    color: grey;margin:0;">`+start_hour+`:`+start_minute+`</p></td>`
+							html += `<td personal-id="`+personal_id+`" hour="`+start_hour+`" minute="`+start_minute+`" class="time_block left_table_vert"><p class="time_hover">`+start_hour+`:`+start_minute+`</p></td>`
 							user_index++;
 						}
 						else{
 							let child = user_index+2;
 							let personal_id = $(".top_header td:nth-child("+child+")").attr('personal-id')
-							html += `<td personal-id="`+personal_id+`" hour="`+start_hour+`" minute="`+start_minute+`" class="time_block left_table_vert"><p style="z-index:1;width: fit-content;
-    font-size: 12px;
-    color: grey;margin:0;">`+start_hour+`:`+start_minute+`</p></td>`
+							html += `<td personal-id="`+personal_id+`" hour="`+start_hour+`" minute="`+start_minute+`" class="time_block left_table_vert"><p class="time_hover">`+start_hour+`:`+start_minute+`</p></td>`
 							user_index++;
 						}
 						
@@ -629,6 +625,12 @@
 			$(".order_detail_left[sort='"+sort+"']").css('display','none')
 		})
 
+		$(document).on('mouseover', '.time_block',function(){
+			$(this).children().css("display", 'block');
+		});
+		$(document).on('mouseleave', '.time_block',function(){
+			$(this).children().css("display", 'none');
+		});
 
 		$(".data-table").on('scroll', function(e) { 
 			var ele = $(e.currentTarget);
