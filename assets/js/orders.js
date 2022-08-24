@@ -207,8 +207,8 @@ function save_order() {
     params.client_id = $("#client_id").val();
 
     var ready_to_save = 0;
-    if(params.client_name == '') {
-        alert('შეიყვანეთ კლიენტის სახელი');
+    if(params.client_id == '') {
+        alert('გთხოვთ აირჩიოთ კლიენტი ან დაამატოთ ახალი');
         ready_to_save++;
     }
     if(params.client_phone == '') {
@@ -581,4 +581,61 @@ $(document).on('click', '#take_from_reserve', function(){
     }
     
 
+});
+
+
+$(document).on('click', '#add_new_client', function(){
+    $.ajax({
+        url: "server-side/writes.action.php",
+        type: "POST",
+        data: {
+            act: "get_client_page"
+        },
+        dataType: "json",
+        success: function(data) {
+            $('#get_client_page').html(data.page);
+            $("#client_sex_new").chosen();
+            $("#get_client_page").dialog({
+                resizable: false,
+                height: 350,
+                width: 800,
+                modal: true,
+                buttons: {
+                    'შენახვა': function() {
+                        $.ajax({
+                            url: "server-side/writes.action.php",
+                            type: "POST",
+                            data: {
+                                act: "save_new_client",
+                                id: $("#new_client_id").val(),
+                                client_name: $("#client_name_new").val(),
+                                client_sex: $("#client_sex_new").val(),
+                                client_phone: $("#client_phone_new").val(),
+                            },
+                            dataType: "json",
+                            success: function(data) {
+                                if(data.error == ''){
+                                    $("#get_client_page").dialog("close");
+                                    $("#client_id").val($("#new_client_id").val())
+                                    $("#client_name").val($("#client_name_new").val())
+                                    $("#client_phone").val($("#client_phone_new").val())
+                                    $("#client_sex").val($("#client_sex_new").val())
+                                    $("#client_sex").trigger("chosen:updated");
+                                }
+                                else{
+                                    alert(data.error)
+                                }
+                                
+
+                                
+                            }
+                        });
+                    },
+                    'დახურვა': function() {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+        }
+    });
 });

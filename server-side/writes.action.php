@@ -188,6 +188,19 @@ switch ($act){
         $data = array('page' => getPage($id, getWriting($id), $personal_id, $hour, $minute,$cal_date));
 
     break;
+    case 'get_client_page':
+        $id = $_REQUEST['id'];
+        if($id == '' OR !isset($_REQUEST['id'])){
+            $db->setQuery("INSERT INTO clients SET datetime = NOW()");
+            $db->execQuery();
+
+            $id = $db->getLastId();
+
+            $db->setQuery("DELETE FROM clients WHERE id='$id'");
+            $db->execQuery();
+        }
+        $data = array('page' => getClientPage($id,getClient($id)));
+        break;
     case 'get_reserve_from_page':
         $id = $_REQUEST['proc_id'];
         $data = array('page' => getReserveFromPage(getReserve($id)));
@@ -505,6 +518,38 @@ switch ($act){
         }
 
     break;
+    case 'save_new_client':
+        $id             = $_REQUEST['id'];
+        $client_name    = $_REQUEST['client_name'];
+        $client_phone   = $_REQUEST['client_phone'];
+        $client_sex     = $_REQUEST['client_sex'];
+
+        $db->setQuery(" SELECT  COUNT(*) AS cc
+                        FROM    clients
+                        WHERE   id = '$id' AND actived = 1");
+        $isset = $db->getResultArray();
+
+        if($isset['result'][0]['cc'] == 0){
+            $db->setQuery("INSERT INTO clients SET
+                                                id = '$id',
+                                                client_name='$client_name',
+                                                client_phone='$client_phone',
+                                                client_sex='$client_sex'");
+
+            $db->execQuery();
+            $data['error'] = '';
+        }
+
+        else{
+            $db->setQuery("UPDATE clients SET user_id='$user_id',
+                                                client_name='$client_name',
+                                                client_phone='$client_phone',
+                                                client_sex='$client_sex'
+                            WHERE id='$id'");
+            $db->execQuery();
+            $data['error'] = '';
+        }
+        break;
     case 'add_to_reserve':
 
         $id          = $_REQUEST['proc_id'];
@@ -1651,6 +1696,23 @@ function getPersonalData($id){
     }
     return $data;
 }
+function getClient($id){
+    GLOBAL $db;
+
+    $db->setQuery(" SELECT  id,
+                            client_name,
+                            client_sex,
+                            client_phone
+
+                    FROM    clients
+                    WHERE   id = '$id'");
+
+    $result = $db->getResultArray();
+
+
+
+    return $result['result'][0];
+}
 function getReserveFromPage($res = ''){
     GLOBAL $db;
 
@@ -1678,6 +1740,39 @@ function getReserveFromPage($res = ''){
     <input type="hidden" id="proc_id_reserve" value="'.$res['id'].'">
     <input type="hidden" id="duration_reserve" value="'.$res['duration'].'">
     <input type="hidden" id="order_id_reserve" value="'.$res['order_id'].'">
+    ';
+
+
+
+    return $data;
+}
+function getClientPage($id,$res = ''){
+    GLOBAL $db;
+
+    $data .= '
+
+    <fieldset class="fieldset">
+        <legend>რეზერვი</legend>
+        <div class="row">
+            <div class="col-sm-4">
+                <label>სახელი გვარი</label>
+                <input value="'.$res['client_name'].'" data-nec="0" style="height: 18px; width: 95%;" type="text" id="client_name_new" class="idle" autocomplete="off"> 
+            </div>
+
+            <div class="col-sm-4">
+                <label>სქესი</label>
+                <select id="client_sex_new">
+                    '.getSex($res['client_sex']).'
+                </select>
+            </div>
+
+            <div class="col-sm-4">
+                <label>ტელეფონი</label>
+                <input value="'.$res['client_phone'].'" data-nec="0" style="height: 18px; width: 95%;" type="text" id="client_phone_new" class="idle" autocomplete="off">
+            </div>
+        </div>
+    </fieldset>
+    <input type="hidden" id="new_client_id" value="'.$id.'">
     ';
 
 
@@ -1738,7 +1833,10 @@ function getPage($id, $res = '',$personal_id = '', $hour = '', $minute = '', $ca
         <div class="row">
             <div class="col-sm-3">
                 <label>სახელი გვარი</label>
-                <input value="'.$res['client_name'].'" data-nec="0" style="height: 18px; width: 95%;" type="text" id="client_name" class="idle" autocomplete="off">
+                <span style="display: flex;flex-direction: row;place-items: center;gap: 10px;">
+                    <input value="'.$res['client_name'].'" data-nec="0" style="height: 18px; width: 95%;" type="text" id="client_name" class="idle" autocomplete="off"> 
+                    <img id="add_new_client" src="assets/img/new.png" style="width:20px;cursor:pointer;">
+                </span>
             </div>
 
             <div class="col-sm-3">

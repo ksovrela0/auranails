@@ -162,9 +162,10 @@
 <script type="text/javascript" language="javascript" src="assets/js/kendoUI/pako_deflate.min.js"></script>  
 
 <script type="text/javascript" language="javascript" src="assets/js/timepicker.js"></script>
-<script type="text/javascript" language="javascript" src="assets/js/orders.js?v=2.0"></script>
+<script type="text/javascript" language="javascript" src="assets/js/orders.js?v=2.1"></script>
 
 <script type="text/javascript" language="javascript" src="assets/js/jquery.datetimepicker.full.min.js"></script> 
 
 <div title="რეზერვი" id="get_reserve_page"></div>
 <div title="რეზერვიდან გამოყვანა" id="get_reserve_from_page"></div>
+<div title="კლიენტის დამატება" id="get_client_page"></div>
