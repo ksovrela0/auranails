@@ -574,7 +574,7 @@
 							let personal_id = $(".top_header td:nth-child("+child+")").attr('personal-id')
 							html += `<td personal-id="`+personal_id+`" hour="`+start_hour+`" minute="`+start_minute+`" class="time_block left_table_vert"><p style="z-index:1;width: fit-content;
     font-size: 12px;
-    color: grey;">`+start_hour+`:`+start_minute+`</p></td>`
+    color: grey;margin:0;">`+start_hour+`:`+start_minute+`</p></td>`
 							user_index++;
 						}
 						else{
@@ -582,7 +582,7 @@
 							let personal_id = $(".top_header td:nth-child("+child+")").attr('personal-id')
 							html += `<td personal-id="`+personal_id+`" hour="`+start_hour+`" minute="`+start_minute+`" class="time_block left_table_vert"><p style="z-index:1;width: fit-content;
     font-size: 12px;
-    color: grey;">`+start_hour+`:`+start_minute+`</p></td>`
+    color: grey;margin:0;">`+start_hour+`:`+start_minute+`</p></td>`
 							user_index++;
 						}
 						
