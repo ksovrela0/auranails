@@ -50638,6 +50638,20 @@ input[type="search"]::-webkit-search-cancel-button {
     box-shadow: 2px 1px black;
 }
 
-.del_procedure:hover{
+.del_procedure:hover, #take_from_reserve:hover{
 	box-shadow: unset;
+}
+
+#take_from_reserve{
+	border: 1px solid black;
+    width: fit-content;
+    padding: 7px;
+    font-size: 18px;
+    color: #fff;
+    background-color: red;
+    cursor: pointer;
+    margin-left: 20px;
+    background: radial-gradient(#ff00fb 0.3%, #ff00fb 90%);
+    border-radius: 15px;
+    box-shadow: 2px 1px black;
 }

@@ -161,7 +161,7 @@ function LoadKendoTable_product(hidden) {
     var itemPerPage = 100;
     var columnsCount = 9;
     var columnsSQL = ["id2:string", "name_product:string", "proc_start:string", "proc_duration:string", "picture:string", "price:string", "reservation:string", "proc_status:string", "action:string"];
-    var columnGeoNames = ["ID", "დასახელება", "დაწყება", "ხანგძლივობა", "შემსრულებელი", "ფასი", "რეზერვი", "სტაატუსი", "ქმედება"];
+    var columnGeoNames = ["ID", "დასახელება", "დაწყება", "ხანგძლივობა", "შემსრულებელი", "ფასი", "რეზერვი", "სტატუსი", "ქმედება"];
     var showOperatorsByColumns = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     var selectors = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     var locked = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -170,6 +170,26 @@ function LoadKendoTable_product(hidden) {
     //KendoUI CLASS CONFIGS END
     const kendo = new kendoUI();
     kendo.loadKendoUI(aJaxURL, 'get_list_product', itemPerPage, columnsCount, columnsSQL, gridName, actions, editType, columnGeoNames, filtersCustomOperators, showOperatorsByColumns, selectors, hidden, 1, locked, lockable);
+}
+
+function LoadKendoTable_reserve(hidden) {
+    //KendoUI CLASS CONFIGS BEGIN
+    var aJaxURL = "server-side/writes.action.php";
+    var gridName = 'reserve_div';
+    var actions = '<div id="take_from_reserve">რეზერვიდან გამოყვანა</div>';
+    var editType = "popup"; // Two types "popup" and "inline"
+    var itemPerPage = 100;
+    var columnsCount = 9;
+    var columnsSQL = ["id2:string", "client_name:string", "client_sex:string", "client_phone:string", "procedure:string", "personal:string", "reservation:string", "write_date2:string", "duration:string"];
+    var columnGeoNames = ["ID", "კლიენტი", "ტელეფონი", "სქესი", "პროცედურა", "შემსრულებელი", "რეზერვაციის თარიღი", "ჩაწერის თარიღი", "ხანგძლივობა"];
+    var showOperatorsByColumns = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    var selectors = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    var locked = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    var lockable = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    var filtersCustomOperators = '{"date":{"start":"-დან","ends":"-მდე","eq":"ზუსტი"}, "number":{"start":"-დან","ends":"-მდე","eq":"ზუსტი"}}';
+    //KendoUI CLASS CONFIGS END
+    const kendo = new kendoUI();
+    kendo.loadKendoUI(aJaxURL, 'get_list_reserve', itemPerPage, columnsCount, columnsSQL, gridName, actions, editType, columnGeoNames, filtersCustomOperators, showOperatorsByColumns, selectors, hidden, 1, locked, lockable);
 }
 
 function save_order() {
@@ -440,7 +460,93 @@ $(document).on('click', '.del_procedure', function(){
                 catch{
                     
                 }
+
+                if(data.reserve_procedures > 0){
+                    let unReserve = confirm("თქვენ გაქვთ "+data.reserve_procedures+" პროცედურა/ჩაწერა რეზერვში. გსურთ რომელიმე პროცედურის/ჩაწერის რეზერვიდან გამოყვანა?");
+
+                    if(unReserve){
+
+                        $.ajax({
+                            url: "server-side/writes.action.php",
+                            type: "POST",
+                            data: {
+                                act: "get_reserve_page"
+                            },
+                            dataType: "json",
+                            success: function(data) {
+                                $('#get_reserve_page').html(data.page);
+                                LoadKendoTable_reserve();
+                                $("#get_reserve_page").dialog({
+                                    resizable: false,
+                                    height: 800,
+                                    width: 1200,
+                                    modal: true,
+                                    buttons: {
+                                        'დახურვა': function() {
+                                            $(this).dialog("close");
+                                        }
+                                    }
+                                });
+                            }
+                        });
+
+                    }
+                }
             }
         });
     }
+});
+
+$(document).on('click', '#take_from_reserve', function(){
+    var grid = $("#reserve_div").data("kendoGrid");
+    var selectedRows = grid.select();
+    var proc_id;
+    selectedRows.each(function(index, row) {
+        var selectedItem = grid.dataItem(row);
+        proc_id = selectedItem.id2;
+    });
+    if(typeof proc_id == 'undefined') {
+        alert('აირჩიეთ მხოლოდ 1 პროცედურა');
+    }
+    else{
+        $.ajax({
+            url: "server-side/writes.action.php",
+            type: "POST",
+            data: {
+                act: "get_reserve_from_page",
+                proc_id: proc_id
+            },
+            dataType: "json",
+            success: function(data) {
+                $('#get_reserve_from_page').html(data.page);
+    
+                $("#personal_id_reserve").chosen();
+                $("#write_date_reserve").datetimepicker({
+                    timepicker:false,
+                    format:'Y-m-d',
+                });
+                $("#start_proc_reserve").datetimepicker({
+                    datepicker:false,
+                    format:'H:i',
+                    step: 15
+                });
+                $("#get_reserve_from_page").dialog({
+                    resizable: false,
+                    height: 400,
+                    width: 600,
+                    modal: true,
+                    buttons: {
+                        'გააქტიურება': function() {
+                            alert(213)
+                        },
+                        'დახურვა': function() {
+                            $(this).dialog("close");
+                        }
+                    }
+                });
+            }
+        });
+    }
+    
+
 });

@@ -9,7 +9,7 @@
 <!---Falg-icons css-->
 <link href="assets/plugins/flag-icon-css/css/flag-icon.min.css" rel="stylesheet">
 <!---Style css-->
-<link href="assets/css/style.css?v=1.4" rel="stylesheet">
+<link href="assets/css/style.css?v=1.5" rel="stylesheet">
 <link href="assets/css/custom-style.css?v=1.4" rel="stylesheet">
 <link href="assets/css/skins.css" rel="stylesheet">
 <link href="assets/css/dark-style.css" rel="stylesheet">
@@ -162,7 +162,9 @@
 <script type="text/javascript" language="javascript" src="assets/js/kendoUI/pako_deflate.min.js"></script>  
 
 <script type="text/javascript" language="javascript" src="assets/js/timepicker.js"></script>
-<script type="text/javascript" language="javascript" src="assets/js/orders.js?v=1.8"></script>
+<script type="text/javascript" language="javascript" src="assets/js/orders.js?v=1.9"></script>
 
 <script type="text/javascript" language="javascript" src="assets/js/jquery.datetimepicker.full.min.js"></script> 
 
+<div title="რეზერვი" id="get_reserve_page"></div>
+<div title="რეზერვიდან გამოყვანა" id="get_reserve_from_page"></div>

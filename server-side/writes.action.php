@@ -188,6 +188,31 @@ switch ($act){
         $data = array('page' => getPage($id, getWriting($id), $personal_id, $hour, $minute,$cal_date));
 
     break;
+    case 'get_reserve_from_page':
+        $id = $_REQUEST['proc_id'];
+        $data = array('page' => getReserveFromPage(getReserve($id)));
+        break;
+    case 'get_reserve_page':
+
+        /* $id = $_REQUEST['id'];
+        $personal_id = $_REQUEST['personal_id'];
+        $hour = $_REQUEST['hour'];
+        $minute = $_REQUEST['minute'];
+        $cal_date = $_REQUEST['cal_date'];
+
+        if($id == '' OR !isset($_REQUEST['id'])){
+            $db->setQuery("INSERT INTO orders SET datetime = NOW()");
+            $db->execQuery();
+
+            $id = $db->getLastId();
+
+            $db->setQuery("DELETE FROM orders WHERE id='$id'");
+            $db->execQuery();
+        } */
+        
+        $data = array('page' => getReservePage());
+
+    break;
 
     case 'copy_writing':
 
@@ -764,13 +789,17 @@ switch ($act){
         else if($type == 'procedure'){
             $ids = explode(',',$ids);
 
-
-
             foreach($ids AS $id){
                 $db->setQuery("UPDATE procedures SET status_id = 3 WHERE id = '$id'");
                 $db->execQuery();
-    
             }
+
+            $db->setQuery(" SELECT  COUNT(*) AS cc
+                            FROM    procedures
+                            WHERE   procedures.actived = 1 AND procedures.reservation = 1 AND procedures.status_id = 1");
+
+            $data['reserve_procedures'] = (int)$db->getResultArray()['result'][0]['cc'];
+
         }
 
         else if($type == 'glass'){
@@ -1090,6 +1119,34 @@ switch ($act){
                         WHERE 	products_glasses.actived = 1
 
                         GROUP BY products_glasses.id");
+        $result = $db->getKendoList($columnCount, $cols);
+
+        $data = $result;
+        break;
+    case 'get_list_reserve':
+        $columnCount = 		$_REQUEST['count'];
+		$cols[]      =      $_REQUEST['cols'];
+
+        $order_id = $_REQUEST['order_id'];
+
+        $db->setQuery("SELECT	procedures.id,
+                                `orders`.client_name,
+                                `orders`.client_phone,
+                                IF(`orders`.client_sex = 1,'ქალი', 'კაცი'),
+                                `procedure`.name,
+                                CONCAT(personal.name, ' ', personal.lastname) AS name,
+                                procedures.reserve_datetime,
+                                `orders`.write_date,
+                                CONCAT(procedures.start_proc,'-', ADDTIME(procedures.start_proc,procedures.duration))
+                                
+
+                        FROM 		procedures
+                        JOIN		`procedure` ON `procedure`.id = procedures.procedure_id
+                        JOIN		personal ON personal.id = procedures.user_id
+                        JOIN        order_status ON order_status.id = procedures.status_id
+                        JOIN        orders ON orders.id = procedures.order_id AND orders.actived = 1
+                        WHERE 	procedures.actived = 1 AND procedures.reservation = 1 AND procedures.status_id = 1
+                        ORDER BY procedures.id");
         $result = $db->getKendoList($columnCount, $cols);
 
         $data = $result;
@@ -1557,6 +1614,59 @@ function getPersonalData($id){
     }
     return $data;
 }
+function getReserveFromPage($res = ''){
+    GLOBAL $db;
+
+    $data .= '
+
+    <fieldset class="fieldset">
+        <legend>რეზერვი</legend>
+        <div class="row">
+            <div class="col-sm-6">
+                <label>აირჩიეთ შემსრულებელი</label>
+                <select id="personal_id_reserve">';
+                $data .= getPersonalData($res['user_id']);
+                $data .= '</select>
+            </div>
+            <div class="col-sm-6">
+                <label>ჩაწერის თარიღი</label>
+                <input value="'.$res['write_date'].'" data-nec="0" style="height: 18px; width: 95%;" type="text" id="write_date_reserve" class="idle" autocomplete="off">
+            </div>
+            <div class="col-sm-6">
+                <label>დაწყების დრო</label>
+                <input value="'.$res['start_proc'].'" data-nec="0" style="height: 18px; width: 95%;" type="text" id="start_proc_reserve" class="idle" autocomplete="off">
+            </div>
+        </div>
+
+    </fieldset>
+
+    ';
+
+
+
+    return $data;
+}
+function getReservePage(){
+    GLOBAL $db;
+
+    $data .= '
+
+    <fieldset class="fieldset">
+        <legend>რეზერვი</legend>
+        <div class="row">
+            <div class="col-sm-12">
+                <div id="reserve_div"></div>
+            </div>';
+        $data .= '</div>
+
+    </fieldset>
+
+    ';
+
+
+
+    return $data;
+}
 function getPage($id, $res = '',$personal_id = '', $hour = '', $minute = '', $cal_date = ''){
 
     GLOBAL $db;
@@ -1656,7 +1766,21 @@ function getPage($id, $res = '',$personal_id = '', $hour = '', $minute = '', $ca
     return $data;
 
 }
+function getReserve($id){
+    GLOBAL $db;
+    $db->setQuery(" SELECT 	procedures.id,
+                            procedures.user_id,
+                            TIME_FORMAT(procedures.start_proc, '%H:%i') AS start_proc,
+                            orders.write_date
+                        
+                            
+                    FROM 	procedures
+                    JOIN    orders ON orders.id = procedures.order_id AND orders.actived = 1
+                    WHERE 	procedures.actived = 1 AND procedures.id = '$id'");
 
+    $result = $db->getResultArray();
+    return $result['result'][0];
+}
 function getWriting($id){
 
     GLOBAL $db;
