@@ -192,10 +192,10 @@
 				<!-- Page Header -->
 				<div class="page-header">
 					<div>
-						<h2 class="main-content-title tx-24 mg-b-5">SMS ისტორია</h2>
+						<h2 class="main-content-title tx-24 mg-b-5">შემოსავალი და ხელფასები</h2>
 						<ol class="breadcrumb">
-							<li class="breadcrumb-item"><a href="#">მომხმარებლები და კომუნიკაცია</a></li>
-							<li class="breadcrumb-item active" aria-current="page">SMS ისტორია</li>
+							<li class="breadcrumb-item"><a href="#">ფინანსები</a></li>
+							<li class="breadcrumb-item active" aria-current="page">შემოსავალი და ხელფასები</li>
 						</ol>
 					</div>
 				</div>
@@ -203,7 +203,13 @@
 				<!-- Row -->
                 
 				<div class="row">
-					<div id="clients_div"></div>
+                    <div class="col-sm-12" style="margin-bottom:20px;">
+                        <input type="text" id="start_date">
+                        <input type="text" id="end_date">
+                        <button id="filter">ფილტრი</button>
+                        
+                    </div>
+					<div id="salary_div"></div>
 				</div>
 				<!-- End Row -->
 			</div>
@@ -226,10 +232,48 @@
 	
 	<div class="main-navbar-backdrop"></div>
 	<div title="პერსონალი" id="get_edit_page">
+	<div title="SMS გაგზავნა" id="get_sms_send_page">
 		
 	</div>
 	<script>
-	var aJaxURL = "server-side/writes.action.php";
+	var aJaxURL = "server-side/salary.action.php";
+	$(document).on("dblclick", "#clients_div tr.k-state-selected", function () {
+		var grid = $("#clients_div").data("kendoGrid");
+		var dItem = grid.dataItem($(this));
+		
+		if(dItem.id == ''){
+			return false;
+		}
+		
+		$.ajax({
+			url: aJaxURL,
+			type: "POST",
+			data: {
+				act: "get_client_page",
+				id: dItem.id
+			},
+			dataType: "json",
+			success: function(data){
+				$('#get_client_page').html(data.page);
+                $("#client_sex_new").chosen();
+
+				$("#get_client_page").dialog({
+					resizable: false,
+                    height: 350,
+                    width: 800,
+                    modal: true,
+					buttons: {
+						"შენახვა": function() {
+							save_new_client();
+						},
+						'დახურვა': function() {
+							$( this ).dialog( "close" );
+						}
+					}
+				});
+			}
+		});
+	});
 	$(document).on('click','#button_add',function(){
 		$.ajax({
 			url: aJaxURL,
@@ -265,6 +309,73 @@
 			}
 		});
 	});
+	$(document).on('click', '#send_sms', function(){
+		var toSendIDS = [];
+		var entityGrid = $("#clients_div").data("kendoGrid");
+		var rows = entityGrid.select();
+		rows.each(function(index, row) {
+			var selectedItem = entityGrid.dataItem(row);
+			// selectedItem has EntityVersionId and the rest of your model
+			toSendIDS.push(selectedItem.id);
+		});
+
+		if(toSendIDS.length == 0){
+			alert("აირჩიეთ 1 ადრესატი მაინც")
+		}
+		else{
+			$.ajax({
+			url: aJaxURL,
+			type: "POST",
+			data: {
+				act: "get_sms_send_page",
+				ids: toSendIDS
+			},
+			dataType: "json",
+			success: function(data){
+				$('#get_sms_send_page').html(data.page);
+				$("#sms_temp").chosen();
+
+				$("#get_sms_send_page").dialog({
+					resizable: false,
+					height: "auto",
+					width: 900,
+					modal: true,
+					buttons: {
+						"შენახვა": function() {
+							$.ajax({
+								url: aJaxURL,
+								type: "POST",
+								data: "act=add_sms_to_queue&id=" + $('#user_ids').val()+"&text="+$('#temp_text').val(),
+								dataType: "json",
+								success: function (data) {
+									alert('SMS წარმატებით გაგზავნილია')
+									$('#get_sms_send_page').dialog("close");
+								}
+							});
+						},
+						'დახურვა': function() {
+							$( this ).dialog( "close" );
+						}
+					}
+				});
+			}
+		});
+		}
+	});
+	$(document).on('change', '#sms_temp', function(){
+		let temp_id = $(this).val();
+		$.ajax({
+			url: aJaxURL,
+			type: "POST",
+			data: "act=get_temp&id=" + temp_id,
+			dataType: "json",
+			success: function (data) {
+				$("#temp_text").html(data.text);
+				$("#sms_temp").val(0);
+				$("#sms_temp").trigger("chosen:updated");
+			}
+		});
+	})
 	$(document).on('click','#button_trash',function(){
 		var removeIDS = [];
 		var entityGrid = $("#product_categories").data("kendoGrid");
@@ -284,8 +395,29 @@
 			}
 		});
 	});
+    $(document).on('click','#filter', function(){
+        let hid = "&start_date="+$("#start_date").val()+"&end_date="+$("#end_date").val();
+		LoadKendoTable_incomming(hid)
+    });
 	$( document ).ready(function() {
-		LoadKendoTable_incomming()
+        var today = new Date();
+        var dd = today.getDate();
+
+        var mm = today.getMonth()+1; 
+        var yyyy = today.getFullYear();
+
+        if(mm < 10){
+            mm = '0'+mm;
+        }
+
+        var op = yyyy+'-'+mm+'-'+dd;
+        $("#start_date,#end_date").val(op)
+        $("#start_date,#end_date").datetimepicker({
+            timepicker:false,
+            format:'Y-m-d',
+        });
+        let hid = "&start_date="+$("#start_date").val()+"&end_date="+$("#end_date").val();
+		LoadKendoTable_incomming(hid)
 	});
     function LoadKendoTable_branches(hidden){
 
@@ -328,27 +460,24 @@
 	function LoadKendoTable_incomming(hidden){
 
 		//KendoUI CLASS CONFIGS BEGIN
-		var aJaxURL	        =   "server-side/writes.action.php";
-		var gridName        = 	'clients_div';
-		var actions         = 	'';
+		var aJaxURL	        =   "server-side/salary.action.php";
+		var gridName        = 	'salary_div';
+		var actions         = 	'<div style="display:block">სულ გამომუშავებული: <b><span id="total_earn">0</span></b> GEL | სულ ხელფასებში გაცემული: <b><span id="total_salary">0</span></b> GEL</div>';
 		var editType        =   "popup"; // Two types "popup" and "inline"
 		var itemPerPage     = 	20;
-		var columnsCount    =	5;
+		var columnsCount    =	4;
 		var columnsSQL      = 	[
-									"id:string",
-									"sms_phone:string",
+									"perosnal:string",
 
-									"sms_date:string",
-									"sms_stat:string",
-                                    "address:string"
+									"count_proc:string",
+									"salary:string",
+                                    "earn:string"
 								];
 		var columnGeoNames  = 	[
-									"ID", 
-                                    "ტელეფონი",
-									"გაგზავნის თარიღი",
-									"სტატუსი",
-									"ტექსტი"
-                                    
+									"სახელი გვარი",
+									"პროცედურების რ-ბა",
+									"ხელფასი",
+                                    "earn"
 								];
 
 		var showOperatorsByColumns  =   [0,0,0,0,0,0,0,0,0,0]; 
@@ -361,7 +490,7 @@
 		//KendoUI CLASS CONFIGS END
 			
 		const kendo = new kendoUI();
-		kendo.loadKendoUI(aJaxURL,'get_list_sms_history',itemPerPage,columnsCount,columnsSQL,gridName,actions,editType,columnGeoNames,filtersCustomOperators,showOperatorsByColumns,selectors,hidden, 1, locked, lockable);
+		kendo.loadKendoUI(aJaxURL,'get_list_salary',itemPerPage,columnsCount,columnsSQL,gridName,actions,editType,columnGeoNames,filtersCustomOperators,showOperatorsByColumns,selectors,hidden, 1, locked, lockable);
 
 	}
 	$(document).on('click','#upload_img',function(){

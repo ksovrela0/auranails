@@ -158,7 +158,7 @@
 <script type="text/javascript" language="javascript" src="assets/plugins/jquery-ui/chosen.jquery.js"></script>
 <script type="text/javascript" language="javascript" src="assets/plugins/jquery-ui/jquery-ui.min.js"></script>
 <script type="text/javascript" language="javascript" src="assets/js/kendoUI/kendo.all.min.js?v1.2"></script>
-<script type="text/javascript" language="javascript" src="assets/js/kendoUI/kendo.main.class.js"></script>
+<script type="text/javascript" language="javascript" src="assets/js/kendoUI/kendo.main.class.js?v=1.1"></script>
 <script type="text/javascript" language="javascript" src="assets/js/kendoUI/pako_deflate.min.js"></script>  
 
 <script type="text/javascript" language="javascript" src="assets/js/timepicker.js"></script>
