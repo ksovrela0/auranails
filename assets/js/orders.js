@@ -264,6 +264,31 @@ function save_product() {
 
     var ready_to_save = 0;
 
+    if(params.procedure_cat_id == '' || params.procedure_cat_id == '0'){
+        alert('აირჩიეთ პროცედურა!');
+        ready_to_save++;
+    }
+    console.log(params.personal_id)
+    if(params.personal_id == '' || params.personal_id == '0' ||  params.personal_id == null){
+        alert('აირჩიეთ შემსრულებელი!');
+        ready_to_save++;
+    }
+    if(params.start_proc == ''){
+        alert('შეიყვანეთ დაწყების დრო');
+        ready_to_save++;
+    }
+    if(params.duration == ''){
+        alert('შეიყვანეთ ხანგძლივობა');
+        ready_to_save++;
+    }
+    if(params.price == ''){
+        alert('შეიყვანეთ ფასი');
+        ready_to_save++;
+    }
+    if(params.salary_percent == ''){
+        alert('შეიყვანეთ ხელფასი');
+        ready_to_save++;
+    }
 
     if(ready_to_save == 0) {
         $.ajax({
