@@ -18,7 +18,7 @@ $db->setQuery(" SELECT  procedures.id
 $proceduresWriting = $db->getResultArray();
 
 foreach($proceduresWriting['result'] AS $proc){
-    $db->setQuery("UPDATE procedures SET status_id = 2 WHERE id = '$id'");
+    $db->setQuery("UPDATE procedures SET status_id = 2 WHERE id = '$proc[id]'");
     $db->execQuery();
 }
 
