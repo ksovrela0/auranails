@@ -124,6 +124,29 @@ switch ($act){
         unset($_SESSION['USERID']);
 
     break;
+    case 'get_temp':
+        $id = $_REQUEST['id'];
+
+        $db->setQuery("SELECT temp_text
+                        FROM sms_templates
+                        WHERE id = '$id'");
+
+        $data['text'] = $db->getResultArray()['result'][0]['temp_text'];
+        break;
+    case 'add_sms_to_queue':
+        $ids = $_REQUEST['id'];
+
+        $id = explode(',', $ids);
+        $text = $_REQUEST['text'];
+        sendSMS('custom',$id,$text);
+        break;
+    case 'get_sms_send_page':
+        $ids = $_REQUEST['ids'];
+
+        $id = implode(',', $ids);
+
+        $data = array('page' => getSendPage($id,count($ids)));
+        break;
     case 'get_path_page':
         $id = $_REQUEST['id'];
         if($id == '' OR !isset($_REQUEST['id'])){
@@ -2147,7 +2170,7 @@ function getCab($id){
     return $data;
 
 }
-function sendSMS($template = '', $rowID = ''){
+function sendSMS($template = '', $rowID = '', $text = ''){
     GLOBAL $db;
     if($template == 'new_writing' && $rowID != ''){
 
@@ -2292,5 +2315,74 @@ function sendSMS($template = '', $rowID = ''){
 
         }
     }
+    else if($template == 'custom' && $rowID != ''){
+        foreach($rowID AS $id){
+            $db->setQuery("SELECT   *
+                            FROM clients
+                            WHERE id = '$id'");
+            $client = $db->getResultArray()['result'][0];
+
+            $clientData = explode(' ',$client['client_name']);
+            $clientName = $clientData[0];
+            $clientLastname = $clientData[1];
+
+            $tempText = str_replace('{clientFirstname}',$clientName,$text);
+            $tempText = str_replace('{clientLastname}',$clientLastname,$tempText);
+            $tempText = str_replace('{clientPhone}',$client['client_phone'],$tempText);
+
+
+            $db->setQuery(" INSERT INTO sms_data (`phone`,`message`,`status`) VALUES ('995$client[client_phone]','$tempText','queue')");
+            $db->execQuery();
+
+        }
+    }
+}
+function getTempCustom(){
+    GLOBAL $db;
+
+    $db->setQuery(" SELECT  id,
+                            temp_name AS title
+
+                    FROM    sms_templates
+                    WHERE   actived = 1 AND default_temp = 0");
+    $data .= '<option value="0">---</option>';
+    $cats = $db->getResultArray();
+    foreach($cats['result'] AS $cat){
+        $data .= '<option value="'.$cat[id].'">'.$cat[title].'</option>';
+        
+    }
+    return $data;
+}
+function getSendPage($id,$cc){
+    GLOBAL $db;
+
+    $data .= '
+
+    <fieldset class="fieldset">
+        <legend>შეტყობინება</legend>
+        <div class="row">
+            <div class="col-sm-6">
+                <p>{clientFirstname} - <b>კლიენტის სახელი</b></p>
+                <p>{clientLastname} - <b>კლიენტის გვარი</b></p>
+                <p>{clientPhone} - <b>კლიენტის ტელეფონი</b></p>
+            </div>
+            <div class="col-sm-12">
+                <label>აირჩიეთ შაბლონი</label>
+                <select id="sms_temp">'.getTempCustom().'</select>
+            </div>
+
+            <div class="col-sm-12" style="margin-top:10px;">
+                <label>ტექსტი - სულ ადრესატი: <b>'.$cc.'</b></label>
+                <textarea id="temp_text" class="template_textarea"></textarea>
+            </div>
+            
+        </div>
+    </fieldset>
+    <input type="hidden" id="user_ids" value="'.$id.'">
+    ';
+
+
+
+    return $data;
 }
 ?>

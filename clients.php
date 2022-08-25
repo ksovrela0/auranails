@@ -226,6 +226,7 @@
 	
 	<div class="main-navbar-backdrop"></div>
 	<div title="პერსონალი" id="get_edit_page">
+	<div title="SMS გაგზავნა" id="get_sms_send_page">
 		
 	</div>
 	<script>
@@ -302,6 +303,73 @@
 			}
 		});
 	});
+	$(document).on('click', '#send_sms', function(){
+		var toSendIDS = [];
+		var entityGrid = $("#clients_div").data("kendoGrid");
+		var rows = entityGrid.select();
+		rows.each(function(index, row) {
+			var selectedItem = entityGrid.dataItem(row);
+			// selectedItem has EntityVersionId and the rest of your model
+			toSendIDS.push(selectedItem.id);
+		});
+
+		if(toSendIDS.length == 0){
+			alert("აირჩიეთ 1 ადრესატი მაინც")
+		}
+		else{
+			$.ajax({
+			url: aJaxURL,
+			type: "POST",
+			data: {
+				act: "get_sms_send_page",
+				ids: toSendIDS
+			},
+			dataType: "json",
+			success: function(data){
+				$('#get_sms_send_page').html(data.page);
+				$("#sms_temp").chosen();
+
+				$("#get_sms_send_page").dialog({
+					resizable: false,
+					height: "auto",
+					width: 900,
+					modal: true,
+					buttons: {
+						"შენახვა": function() {
+							$.ajax({
+								url: aJaxURL,
+								type: "POST",
+								data: "act=add_sms_to_queue&id=" + $('#user_ids').val()+"&text="+$('#temp_text').val(),
+								dataType: "json",
+								success: function (data) {
+									alert('SMS წარმატებით გაგზავნილია')
+									$('#get_sms_send_page').dialog("close");
+								}
+							});
+						},
+						'დახურვა': function() {
+							$( this ).dialog( "close" );
+						}
+					}
+				});
+			}
+		});
+		}
+	});
+	$(document).on('change', '#sms_temp', function(){
+		let temp_id = $(this).val();
+		$.ajax({
+			url: aJaxURL,
+			type: "POST",
+			data: "act=get_temp&id=" + temp_id,
+			dataType: "json",
+			success: function (data) {
+				$("#temp_text").html(data.text);
+				$("#sms_temp").val(0);
+				$("#sms_temp").trigger("chosen:updated");
+			}
+		});
+	})
 	$(document).on('click','#button_trash',function(){
 		var removeIDS = [];
 		var entityGrid = $("#product_categories").data("kendoGrid");

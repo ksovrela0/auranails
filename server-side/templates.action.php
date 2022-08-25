@@ -339,7 +339,7 @@ function getTempPage($id,$res = ''){
     $data .= '
 
     <fieldset class="fieldset">
-        <legend>რეზერვი</legend>
+        <legend>შეტყობინება</legend>
         <div class="row">
             <div class="col-sm-6">
                 <p>{clientFirstname} - <b>კლიენტის სახელი</b></p>
@@ -352,7 +352,7 @@ function getTempPage($id,$res = ''){
             </div>
 
             <div class="col-sm-12">
-                <label>სქესი</label>
+                <label>ტექსტი</label>
                 <textarea id="temp_text" class="template_textarea">'.$res['text'].'</textarea>
             </div>
             
