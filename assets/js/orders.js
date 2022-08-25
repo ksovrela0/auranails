@@ -614,41 +614,59 @@ $(document).on('click', '#take_from_reserve', function(){
 });
 
 function save_new_client(){
-    $.ajax({
-        url: "server-side/writes.action.php",
-        type: "POST",
-        data: {
-            act: "save_new_client",
-            id: $("#new_client_id").val(),
-            client_name: $("#client_name_new").val(),
-            client_sex: $("#client_sex_new").val(),
-            client_phone: $("#client_phone_new").val(),
-        },
-        dataType: "json",
-        success: function(data) {
-            if(data.error == ''){
-                try{
-                    $("#get_client_page").dialog("close");
-                    $("#client_id").val($("#new_client_id").val())
-                    $("#client_name").val($("#client_name_new").val())
-                    $("#client_phone").val($("#client_phone_new").val())
-                    $("#client_sex").val($("#client_sex_new").val())
-                    $("#client_sex").trigger("chosen:updated");
-                    $("#clients_div").data("kendoGrid").dataSource.read();
-                }
-                catch{
 
+
+    let ready_to_save = 0;
+    if($("#client_name_new").val() == ''){
+        alert('გთხოვთ შეიყვანოთ კლიენტის სახელი');
+        ready_to_save++;
+    }
+    if($("#client_phone_new").val() == ''){
+        alert('გთხოვთ შეიყვანოთ კლიენტის ტელეფონი');
+        ready_to_save++;
+    }
+    if($("#client_phone_new").val().length < 9){
+        alert('არასწორი ტელეფონი');
+        ready_to_save++;
+    }
+    if(ready_to_save == 0){
+        $.ajax({
+            url: "server-side/writes.action.php",
+            type: "POST",
+            data: {
+                act: "save_new_client",
+                id: $("#new_client_id").val(),
+                client_name: $("#client_name_new").val(),
+                client_sex: $("#client_sex_new").val(),
+                client_phone: $("#client_phone_new").val(),
+            },
+            dataType: "json",
+            success: function(data) {
+                if(data.error == ''){
+                    try{
+                        $("#get_client_page").dialog("close");
+                        $("#client_id").val($("#new_client_id").val())
+                        $("#client_name").val($("#client_name_new").val())
+                        $("#client_phone").val($("#client_phone_new").val())
+                        $("#client_sex").val($("#client_sex_new").val())
+                        $("#client_sex").trigger("chosen:updated");
+                        $("#clients_div").data("kendoGrid").dataSource.read();
+                    }
+                    catch{
+    
+                    }
+                    
+                }
+                else{
+                    alert(data.error)
                 }
                 
+    
+                
             }
-            else{
-                alert(data.error)
-            }
-            
-
-            
-        }
-    });
+        });
+    }
+    
 }
 $(document).on('click', '#add_new_client', function(){
     $.ajax({
