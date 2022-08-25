@@ -1,3 +1,8 @@
+function maxLengthCheck(object)
+{
+    if (object.value.length > object.maxLength)
+        object.value = object.value.slice(0, object.maxLength)
+}
 function new_writing(order_id = '',personal_id='',hour='',minute=''){
     let cal_date = $("#cal_date").val();
     $.ajax({

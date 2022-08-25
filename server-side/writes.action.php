@@ -500,6 +500,9 @@ switch ($act){
 
             $db->execQuery();
             $data['error'] = '';
+
+
+            sendSMS('new_writing',$id);
         }
 
         else{
@@ -606,6 +609,7 @@ switch ($act){
                                                         price='$price',
                                                         start_proc='$start_proc',
                                                         salary_percent='$salary_percent',
+                                                        reserve_datetime=NOW(),
                                                         reservation = 1");
 
             $db->execQuery();
@@ -623,6 +627,7 @@ switch ($act){
                                                     price='$price',
                                                     start_proc='$start_proc',
                                                     salary_percent='$salary_percent',
+                                                    reserve_datetime=NOW(),
                                                     reservation = 1
                         WHERE id='$id'");
 
@@ -767,6 +772,8 @@ switch ($act){
 
                     $db->execQuery();
                     $data['error'] = '';
+
+                    sendSMS('change', $id);
                 }
                 
             }
@@ -893,18 +900,18 @@ switch ($act){
         }
 
         else if($type == 'procedure'){
-            $ids = explode(',',$ids);
 
-            foreach($ids AS $id){
-                $db->setQuery("UPDATE procedures SET status_id = 3 WHERE id = '$id'");
-                $db->execQuery();
-            }
+            $db->setQuery("UPDATE procedures SET status_id = 3 WHERE id = '$ids'");
+            $db->execQuery();
+            
 
             $db->setQuery(" SELECT  COUNT(*) AS cc
                             FROM    procedures
                             WHERE   procedures.actived = 1 AND procedures.reservation = 1 AND procedures.status_id = 1");
 
             $data['reserve_procedures'] = (int)$db->getResultArray()['result'][0]['cc'];
+
+            sendSMS('cancel', $ids);
 
         }
 
@@ -1792,7 +1799,7 @@ function getClientPage($id,$res = ''){
 
             <div class="col-sm-4">
                 <label>ტელეფონი</label>
-                <input value="'.$res['client_phone'].'" data-nec="0" style="height: 18px; width: 95%;" type="text" id="client_phone_new" class="idle" autocomplete="off">
+                <input value="'.$res['client_phone'].'" data-nec="0" style="height: 18px; width: 95%;" type="number" oninput="maxLengthCheck(this)" maxLength="9" id="client_phone_new" class="idle" autocomplete="off">
             </div>
         </div>
     </fieldset>
@@ -1872,7 +1879,7 @@ function getPage($id, $res = '',$personal_id = '', $hour = '', $minute = '', $ca
 
             <div class="col-sm-3">
                 <label>ტელეფონი</label>
-                <input value="'.$res['client_phone'].'" data-nec="0" style="height: 18px; width: 95%;" type="text" id="client_phone" class="idle" autocomplete="off">
+                <input value="'.$res['client_phone'].'" data-nec="0" style="height: 18px; width: 95%;" oninput="maxLengthCheck(this)" maxLength="9" type="number" id="client_phone" class="idle" autocomplete="off">
             </div>
 
             <div class="col-sm-3">
@@ -2125,5 +2132,150 @@ function getCab($id){
     return $data;
 
 }
+function sendSMS($template = '', $rowID = ''){
+    GLOBAL $db;
+    if($template == 'new_writing' && $rowID != ''){
 
+        $db->setQuery(" SELECT  id,
+                                temp_name AS title,
+                                temp_text AS text
+
+                        FROM    sms_templates
+                        WHERE   id = '1'");
+
+        $smsTemp = $db->getResultArray()['result'][0];
+
+        $db->setQuery(" SELECT  procedures.id,
+                                orders.id AS order_id,
+                                orders.client_name,
+                                orders.client_phone,
+                                orders.write_date,
+                                procedures.start_proc,
+                                CONCAT(personal.name, ' ', personal.lastname) AS personal_name,
+                                `procedure`.name AS proc_name
+
+                        FROM    procedures
+                        JOIN    orders ON orders.id = procedures.order_id AND orders.actived = 1
+                        JOIN    personal ON personal.id = procedures.user_id
+                        JOIN    `procedure` ON `procedure`.id = procedures.procedure_id
+                        WHERE   procedures.actived = 1 AND procedures.order_id = '$rowID' AND procedures.send_sms_writing = 1 AND procedures.is_writing_sent = 0 AND procedures.status_id = 1 AND procedures.reservation = 0");
+
+        $proceduresWriting = $db->getResultArray();
+
+        foreach($proceduresWriting['result'] AS $procedure){
+            $client = explode(' ',$procedure['client_name']);
+            $clientName = $client[0];
+            $clientLastname = $client[1];
+
+            $tempText = str_replace('{personalName}',$procedure['personal_name'],$smsTemp['text']); //adding personal name
+            $tempText = str_replace('{procedureName}',$procedure['proc_name'],$tempText);
+            $tempText = str_replace('{procedureDate}',$procedure['write_date'].' '.$procedure['start_proc'],$tempText);
+            $tempText = str_replace('{procedureID}',$procedure['id'],$tempText);
+
+            $tempText = str_replace('{clientFirstname}',$clientName,$tempText);
+            $tempText = str_replace('{clientLastname}',$clientLastname,$tempText);
+            $tempText = str_replace('{clientPhone}',$procedure['client_phone'],$tempText);
+
+
+            $db->setQuery(" INSERT INTO sms_data (`phone`,`message`,`status`) VALUES ('995$procedure[client_phone]','$tempText','queue')");
+            $db->execQuery();
+
+        }
+    }
+    else if($template == 'change' && $rowID != ''){
+        $db->setQuery(" SELECT  id,
+                                temp_name AS title,
+                                temp_text AS text
+
+                        FROM    sms_templates
+                        WHERE   id = '2'");
+
+        $smsTemp = $db->getResultArray()['result'][0];
+
+        $db->setQuery(" SELECT  procedures.id,
+                                orders.id AS order_id,
+                                orders.client_name,
+                                orders.client_phone,
+                                orders.write_date,
+                                procedures.start_proc,
+                                CONCAT(personal.name, ' ', personal.lastname) AS personal_name,
+                                `procedure`.name AS proc_name
+
+                        FROM    procedures
+                        JOIN    orders ON orders.id = procedures.order_id AND orders.actived = 1
+                        JOIN    personal ON personal.id = procedures.user_id
+                        JOIN    `procedure` ON `procedure`.id = procedures.procedure_id
+                        WHERE   procedures.actived = 1 AND procedures.id = '$rowID' AND procedures.status_id = 1");
+
+        $proceduresWriting = $db->getResultArray();
+
+        foreach($proceduresWriting['result'] AS $procedure){
+            $client = explode(' ',$procedure['client_name']);
+            $clientName = $client[0];
+            $clientLastname = $client[1];
+
+            $tempText = str_replace('{personalName}',$procedure['personal_name'],$smsTemp['text']); //adding personal name
+            $tempText = str_replace('{procedureName}',$procedure['proc_name'],$tempText);
+            $tempText = str_replace('{procedureDate}',$procedure['write_date'].' '.$procedure['start_proc'],$tempText);
+            $tempText = str_replace('{procedureID}',$procedure['id'],$tempText);
+
+            $tempText = str_replace('{clientFirstname}',$clientName,$tempText);
+            $tempText = str_replace('{clientLastname}',$clientLastname,$tempText);
+            $tempText = str_replace('{clientPhone}',$procedure['client_phone'],$tempText);
+
+
+            $db->setQuery(" INSERT INTO sms_data (`phone`,`message`,`status`) VALUES ('995$procedure[client_phone]','$tempText','queue')");
+            $db->execQuery();
+
+        }
+
+    }
+    else if($template == 'cancel' && $rowID != ''){
+        $db->setQuery(" SELECT  id,
+                                temp_name AS title,
+                                temp_text AS text
+
+                        FROM    sms_templates
+                        WHERE   id = '4'");
+
+        $smsTemp = $db->getResultArray()['result'][0];
+
+        $db->setQuery(" SELECT  procedures.id,
+                                orders.id AS order_id,
+                                orders.client_name,
+                                orders.client_phone,
+                                orders.write_date,
+                                procedures.start_proc,
+                                CONCAT(personal.name, ' ', personal.lastname) AS personal_name,
+                                `procedure`.name AS proc_name
+
+                        FROM    procedures
+                        JOIN    orders ON orders.id = procedures.order_id AND orders.actived = 1
+                        JOIN    personal ON personal.id = procedures.user_id
+                        JOIN    `procedure` ON `procedure`.id = procedures.procedure_id
+                        WHERE   procedures.actived = 1 AND procedures.id = '$rowID' AND procedures.status_id = 3 AND procedures.reservation = 0");
+
+        $proceduresWriting = $db->getResultArray();
+
+        foreach($proceduresWriting['result'] AS $procedure){
+            $client = explode(' ',$procedure['client_name']);
+            $clientName = $client[0];
+            $clientLastname = $client[1];
+
+            $tempText = str_replace('{personalName}',$procedure['personal_name'],$smsTemp['text']); //adding personal name
+            $tempText = str_replace('{procedureName}',$procedure['proc_name'],$tempText);
+            $tempText = str_replace('{procedureDate}',$procedure['write_date'].' '.$procedure['start_proc'],$tempText);
+            $tempText = str_replace('{procedureID}',$procedure['id'],$tempText);
+
+            $tempText = str_replace('{clientFirstname}',$clientName,$tempText);
+            $tempText = str_replace('{clientLastname}',$clientLastname,$tempText);
+            $tempText = str_replace('{clientPhone}',$procedure['client_phone'],$tempText);
+
+
+            $db->setQuery(" INSERT INTO sms_data (`phone`,`message`,`status`) VALUES ('995$procedure[client_phone]','$tempText','queue')");
+            $db->execQuery();
+
+        }
+    }
+}
 ?>

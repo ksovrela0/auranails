@@ -723,9 +723,12 @@
 								let hour = u.start_proc.split(':')[0];
 								let minute = u.start_proc.split(':')[1];
 
-								if(minute == '00'){
+								
+
+								/* if(minute == '00'){
 									minute = 0;
 								}
+								alert(minute) */
 
 								let height = (u.duration/step_minute)*height_step;
 

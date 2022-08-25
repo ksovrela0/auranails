@@ -15,8 +15,27 @@
             echo '<div class="dropdown d-md-flex" style="margin-left:10px;"> <p style="margin:0!important;font-weight: 700;">ბალანასი: <span id="money_card"> + 24.75</span></p>  </div>';
          } */
       ?>
+         <?php 
+            $apikey = '571c38c51589289fde4c41b5a2abaae4aaa051880832ccecfe230cbc1aac1d13';
+            $url = 'https://api.gosms.ge/api/sms-balance';
+            $fields = array(
+               'api_key' => $apikey,
+            );
+            $fields_string = http_build_query($fields);
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_POST, false);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $output = curl_exec($ch);
+            $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            
+            $data = json_decode($output, true);
          
          
+         ?>
+         <div class="dropdown d-md-flex" style="margin-left:10px;"> <p style="margin:0!important;font-weight: 700;">SMS ბალანასი: <span id="money_card"> <?php echo $data['balance']; ?></span></p>  </div>
          <div class="dropdown main-header-notification" style="display:none">
             <a class="nav-link icon" href=""> <i class="fe fe-bell"></i> <span class="pulse bg-danger"></span> </a> 
             <div class="dropdown-menu">
