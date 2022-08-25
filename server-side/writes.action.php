@@ -704,9 +704,9 @@ switch ($act){
                             FROM    procedures
                             JOIN    orders ON orders.id = procedures.order_id AND orders.actived = 1
                             WHERE   procedures.actived = 1 AND procedures.status_id IN (1,2) AND DATE(orders.write_date) = '$order_date' AND procedures.reservation = 0 AND procedures.user_id = '$personal_id'
-                            AND     ('$start_proc' BETWEEN procedures.start_proc AND ADDTIME(procedures.start_proc,procedures.duration) 
-                                    OR ADDTIME('$start_proc',TIMEDIFF('$duration','00:01')) BETWEEN procedures.start_proc AND ADDTIME(procedures.start_proc,procedures.duration) 
-                                    OR procedures.start_proc BETWEEN '$start_proc' AND ADDTIME('$start_proc',TIMEDIFF('$duration','00:01')))");
+                            AND     (ADDTIME('$start_proc','00:01') BETWEEN procedures.start_proc AND ADDTIME(procedures.start_proc,procedures.duration) 
+                                    OR ADDTIME(ADDTIME('$start_proc','00:01'),TIMEDIFF('$duration','00:01')) BETWEEN procedures.start_proc AND ADDTIME(procedures.start_proc,procedures.duration) 
+                                    OR procedures.start_proc BETWEEN ADDTIME('$start_proc','00:01') AND ADDTIME(ADDTIME('$start_proc','00:01'),TIMEDIFF('$duration','00:01')))");
             $existedProcedures = $db->getResultArray()['result'][0]['cc'];
             
             if($existedProcedures > 0){
@@ -750,9 +750,9 @@ switch ($act){
                                 FROM    procedures
                                 JOIN    orders ON orders.id = procedures.order_id AND orders.actived = 1
                                 WHERE   procedures.actived = 1 AND procedures.status_id IN (1,2) AND DATE(orders.write_date) = '$order_date' AND procedures.reservation = 0 AND procedures.user_id = '$personal_id'
-                                AND     ('$start_proc' BETWEEN procedures.start_proc AND ADDTIME(procedures.start_proc,procedures.duration) 
-                                        OR ADDTIME('$start_proc',TIMEDIFF('$duration','00:01')) BETWEEN procedures.start_proc AND ADDTIME(procedures.start_proc,procedures.duration) 
-                                        OR procedures.start_proc BETWEEN '$start_proc' AND ADDTIME('$start_proc',TIMEDIFF('$duration','00:01')))");
+                                AND     (ADDTIME('$start_proc','00:01') BETWEEN procedures.start_proc AND ADDTIME(procedures.start_proc,procedures.duration) 
+                                        OR ADDTIME(ADDTIME('$start_proc','00:01'),TIMEDIFF('$duration','00:01')) BETWEEN procedures.start_proc AND ADDTIME(procedures.start_proc,procedures.duration) 
+                                        OR procedures.start_proc BETWEEN ADDTIME('$start_proc','00:01') AND ADDTIME(ADDTIME('$start_proc','00:01'),TIMEDIFF('$duration','00:01')))");
                 $existedProcedures = $db->getResultArray()['result'][0]['cc'];
                 
                 if($existedProcedures > 0){
