@@ -1207,6 +1207,7 @@ switch ($act){
 
         $db->setQuery(" SELECT id, phone, datetime,status,message
                         FROM sms_data
+                        ORDER BY id DESC
                         ");
         $result = $db->getKendoList($columnCount, $cols);
 
