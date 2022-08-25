@@ -10,7 +10,7 @@
 <link href="assets/plugins/flag-icon-css/css/flag-icon.min.css" rel="stylesheet">
 <!---Style css-->
 <link href="assets/css/style.css?v=1.8" rel="stylesheet">
-<link href="assets/css/custom-style.css?v=1.67" rel="stylesheet">
+<link href="assets/css/custom-style.css?v=1.337" rel="stylesheet">
 <link href="assets/css/skins.css" rel="stylesheet">
 <link href="assets/css/dark-style.css" rel="stylesheet">
 <link href="assets/css/custom-dark-style.css" rel="stylesheet">

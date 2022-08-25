@@ -298,7 +298,7 @@
 		<!-- Row -->
 		<div class="row text-center pl-0 pr-0 ml-0 mr-0">
 			<div class="col-lg-3 d-block mx-auto">
-				<div class="text-center mb-2"> <img src="assets/img/brand/logo.png" class="header-brand-img" alt="logo"> <img src="assets/img/brand/logo-light.png" class="header-brand-img theme-logos" alt="logo"> </div>
+				<div class="text-center mb-2"> <img src="assets/img/brand/logo.jpg?v=1.2" class="header-brand-img" alt="logo"> <img src="assets/img/brand/logo-light.png" class="header-brand-img theme-logos" alt="logo"> </div>
 				<div class="card custom-card">
 					<div class="card-body">
 						<h4 class="text-center">სამართავი პანელი</h4>
