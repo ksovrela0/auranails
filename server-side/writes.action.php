@@ -1057,6 +1057,9 @@ switch ($act){
                     elseif($columns[$j] == "id2" OR $columns[$j] == "price"){
                         $g = array('field'=>$columns[$j],'encoded'=>false,'title'=>$columnNames[0][$a],'filterable'=>array('multi'=>true,'search' => true), 'width' => 60);
                     }
+                    elseif($columns[$j] == 'sms_stat' OR $columns[$j] == 'sms_date' OR $columns[$j] == 'sms_phone' ){
+                        $g = array('field'=>$columns[$j],'encoded'=>false,'title'=>$columnNames[0][$a],'filterable'=>array('multi'=>true,'search' => true), 'width' => 150);
+                    }
                     elseif($columns[$j] == "inc_date"){
 
 						$g = array('field'=>$columns[$j],'encoded'=>false,'title'=>$columnNames[0][$a],'filterable'=>array('multi'=>true,'search' => true), 'width' => 130);
@@ -1198,6 +1201,17 @@ switch ($act){
         $data = $result;
 
     break;
+    case 'get_list_sms_history':
+        $columnCount = 		$_REQUEST['count'];
+		$cols[]      =      $_REQUEST['cols'];
+
+        $db->setQuery(" SELECT id, phone, datetime,status,message
+                        FROM sms_data
+                        ");
+        $result = $db->getKendoList($columnCount, $cols);
+
+        $data = $result;
+        break;
     case 'get_list_proccess':
         $columnCount = 		$_REQUEST['count'];
 		$cols[]      =      $_REQUEST['cols'];
