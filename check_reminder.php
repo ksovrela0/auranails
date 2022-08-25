@@ -21,7 +21,7 @@ $db->setQuery(" SELECT  procedures.id,
                 JOIN    `procedure` ON `procedure`.id = procedures.procedure_id
                 WHERE   procedures.actived = 1 AND procedures.send_sms_reminder = 1 AND procedures.is_reminder_sent = 0 AND procedures.status_id = 1  AND procedures.reservation = 0
                         AND (ROUND(UNIX_TIMESTAMP(CONCAT(orders.write_date,' ', procedures.start_proc))) - UNIX_TIMESTAMP()) < 72000
-                        AND (ROUND(UNIX_TIMESTAMP(CONCAT(orders.write_date,' ', procedures.start_proc))) - UNIX_TIMESTAMP()) > 0");
+                        AND (ROUND(UNIX_TIMESTAMP(CONCAT(orders.write_date,' ', procedures.start_proc))) - UNIX_TIMESTAMP()) > 68400");
 
 
 
