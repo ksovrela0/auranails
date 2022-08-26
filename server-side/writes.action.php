@@ -1888,7 +1888,7 @@ function getPage($id, $res = '',$personal_id = '', $hour = '', $minute = '', $ca
         $male_checked = 'checked';
 
     }
-    $datetime = $res['datetime'];
+    $datetime = $res['write_date'];
     if($res['write_date'] == ''){
         $datetime = $cal_date;
     }
@@ -1898,7 +1898,7 @@ function getPage($id, $res = '',$personal_id = '', $hour = '', $minute = '', $ca
     $data .= '
 
     <fieldset class="fieldset">
-        <legend>ინფორმაცია</legend>
+        <legend>ინფორმაცია '.$datetime.'</legend>
         <div class="row">
             <div class="col-sm-3">
                 <label>სახელი გვარი</label>
@@ -1996,6 +1996,7 @@ function getWriting($id){
 
     $db->setQuery(" SELECT 	orders.id,
                             orders.datetime,
+                            DATE(orders.write_date) AS write_date,
                             orders.client_name,
                             orders.client_id,
                             orders.client_sex,
