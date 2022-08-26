@@ -47,78 +47,8 @@
                                 </div>
                                 <div class="col-xl-12">
                                     <div class="card-body p-md-5 text-black">
-                                        <h3 class="mb-5">Aura Nails</h3>
-                                        <div class="row">
-                                            <div class="col-md-6 mb-4">
-                                                <div class="form-outline">
-                                                    <label class="form-label" for="form3Example1m">სახელი*</label>
-                                                    <input type="text" id="firstname" class="form-control" />
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 mb-4">
-                                                <div class="form-outline">
-                                                    <label class="form-label" for="form3Example1n">გვარი*</label>
-                                                    <input type="text" id="lastname" class="form-control" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6 mb-4">
-                                                <div class="form-outline">
-                                                    <label class="form-label" for="form3Example1m1">ტელეფონის ნომერი*</label>
-                                                    <input type="number" maxlength="9" oninput="maxLengthCheck(this)" id="phone" class="form-control" />
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 mb-4">
-                                                <div class="d-md-flex justify-content-start align-items-center mb-4 py-2" style="margin-top: 30px;">
-													<h6 class="mb-0 me-4">სქესი*: </h6>
-													<div class="form-check form-check-inline mb-0 me-4">
-														<input class="form-check-input" type="radio" name="sex" id="femaleGender"
-															value="1" />
-														<label class="form-check-label" for="femaleGender">ქალი</label>
-													</div>
-													<div class="form-check form-check-inline mb-0 me-4">
-														<input class="form-check-input" type="radio" name="sex" id="maleGender"
-															value="2" />
-														<label class="form-check-label" for="maleGender">კაცი</label>
-													</div>
-												</div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-3 mb-4">
-												<label class="form-label" for="procedure">აირჩიეთ პროცედურა*</label>
-                                                <select class="select" id="procedure">
-                                                    <option value="1">---</option>
-                                                </select>
-                                            </div>
-											<div class="col-md-3 mb-4">
-                                                <label class="form-label" for="form3Example8">ჩაწერის თარიღი*</label>
-                                                <input type="text" id="write_date" class="form-control" />
-                                            </div>
-                                            <div class="col-md-3 mb-4">
-												<label class="form-label" for="personal">აირჩიეთ პერსონალი*</label>
-                                                <select class="select" id="personal">
-
-                                                </select>
-                                            </div>
-                                            
-											<div class="col-md-3 mb-4">
-												<label class="form-label" for="personal">აირჩიეთ ჩაწერის დრო*</label>
-                                                <select class="select" id="proc_time">
-
-                                                </select>
-                                            </div>
-                                        </div>
+                                        <h3 class="mb-5">გადახდა ვერ განხორციელდა!!!</h3>
                                         
-                                        <div class="form-outline mb-4">
-                                            <label class="form-label" for="form3Example9">დამატებითი დეტალები</label>
-                                            <input type="textarea" id="comment" class="form-control" />
-                                        </div>
-                                        <div class="d-flex justify-content-end pt-3">
-											<div style="font-size:22px;">პროცედურის ფასი: <b><span id="total" style="color:red">0</span></b> GEL | წინასწარ გადასახდელი 20%: <b><span id="percent" style="color:green">0</span></b> GEL</div>
-                                            <button style="position:relative;" class="btn btn-warning btn-lg ms-2" ammount="0" id="payButton">გადახდა </button>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -189,8 +119,7 @@
 		if(read_to_save == 0){
 			let ammount = $(this).attr('ammount');
 			/* window.open ("payment.php?ammount="+ammount,"mywindow","menubar=1,resizable=1,width=550,height=650"); */
-			$(this).prop('disabled', true)
-			$(this).html(`<img style="width: 30px;margin:5px;" src="loading.gif">`);
+
 			$.ajax({
 				url: 'payment.php',
 				type: "POST",
@@ -204,7 +133,7 @@
 
 					let timer = setInterval(function(){
 						checkPayment(payID,orderID)
-					},2000)
+					},1000)
 				}
 			});
 		}
@@ -220,9 +149,9 @@
 				dataType: "json",
 				success: function (data) {
 					if(data.status == 'Succeeded'){
-						window.location.href = "success.html";
+						window.location.href = "success.php";
 					}
-					else if(data.status == 'Failed' || data.status == 'Expired'){
+                    else if(data.status == 'failed'){
                         window.location.href = "failed.php";
                     }
 					

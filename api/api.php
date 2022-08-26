@@ -42,21 +42,90 @@ switch ($act){
 
         $data['procedures'] = $opt;
 
+
+        /* $range=range(strtotime("09:00"),strtotime("21:00"),15*60);
+        foreach($range as $time){
+                $aaa =  date("H:i",$time);
+
+                $db->setQuery("INSERT INTO times SET timeset='$aaa'");
+                $db->execQuery();
+        } */
+
     break;
-    case 'get_temp_page':
-        $id = $_REQUEST['id'];
-        if($id == '' OR !isset($_REQUEST['id'])){
-            $db->setQuery("INSERT INTO sms_templates SET temp_name = NOW()");
-            $db->execQuery();
+    case 'get_personal':
 
-            $id = $db->getLastId();
+        $date = $_REQUEST['date'];
+        $proc_id = $_REQUEST['procedure_id'];
 
-            $db->setQuery("DELETE FROM sms_templates WHERE id='$id'");
-            $db->execQuery();
+
+
+        $db->setQuery(" SELECT  personal.id,
+                                CONCAT(personal.name, ' ', personal.lastname) AS name
+                        FROM    personal
+
+                        WHERE personal.actived = 1 AND DAYOFWEEK('$date') IN (SELECT week_day_id FROM personal_work_days WHERE actived = 1 AND personal_id = personal.id) AND '$proc_id' IN (SELECT procedure_id FROM procedure_personal WHERE personal_id = personal.id AND actived = 1)
+                        ORDER BY personal.id ASC");
+        $cats = $db->getResultArray();
+        $opt = '<option value="">---</option>';
+        foreach($cats['result'] AS $cat){
+            $opt .= '<option value="'.$cat['id'].'">'.$cat['name'].'</option>';
         }
-        $data = array('page' => getTempPage($id,getTemp($id)));
-        break;
 
+        $db->setQuery("SELECT price FROM `procedure` WHERE id = '$proc_id'");
+        $procPrice = $db->getResultArray()['result'][0]['price'];
+
+        $data['personal'] = $opt;
+
+        $data['total'] = $procPrice;
+        $data['percent'] = ($procPrice*20)/100;
+    break;
+    case 'get_times':
+        $date = $_REQUEST['date'];
+        $proc_id = $_REQUEST['procedure_id'];
+        $personal = $_REQUEST['personal'];
+
+        $allTimes = range(strtotime("09:00"),strtotime("21:00"),15*60);
+
+        $db->setQuery("SELECT duration FROM `procedure` WHERE id = '$proc_id'");
+        $procDuration = $db->getResultArray()['result'][0]['duration'];
+
+        $db->setQuery(" SELECT  TIME_FORMAT(ADDTIME(TIMEDIFF(procedures.start_proc,'$procDuration'),'00:01'), '%H:%i') AS start_proc,
+                                TIME_FORMAT(TIMEDIFF(ADDTIME(procedures.start_proc,procedures.duration),'00:01'), '%H:%i') AS end_proc
+
+                        FROM    procedures
+                        JOIN    orders ON orders.id = procedures.order_id AND orders.write_date = '$date'
+                        WHERE   procedures.actived = 1 AND procedures.reservation = 0 AND procedures.status_id IN (1,3) AND procedures.user_id = '$personal'
+                        ");
+
+
+        $takenTimes = $db->getResultArray();
+
+        
+
+        $timesToRemove = array();
+
+
+
+        foreach($takenTimes['result'] AS $taken){
+            foreach($allTimes AS $time){
+                if(strtotime($taken['start_proc']) <= $time && strtotime($taken['end_proc']) >= $time){
+                    $timesToRemove[] = $time;
+                }
+                
+            }
+        }
+
+        $allowedTimes = array_diff(array_unique($allTimes), $timesToRemove);
+
+
+        $opt = '<option value="">---</option>';
+        foreach($allowedTimes AS $times){
+            $opt .= '<option value="'.date('H:i',$times).'">'.date('H:i',$times).'</option>';
+        }
+
+        $data['times'] = $opt;
+
+    break;
     case 'save_temp':
         $id             = $_REQUEST['id'];
         $temp_title    = $_REQUEST['temp_title'];

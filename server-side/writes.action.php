@@ -1898,7 +1898,7 @@ function getPage($id, $res = '',$personal_id = '', $hour = '', $minute = '', $ca
     $data .= '
 
     <fieldset class="fieldset">
-        <legend>ინფორმაცია '.$datetime.'</legend>
+        <legend>ინფორმაცია</legend>
         <div class="row">
             <div class="col-sm-3">
                 <label>სახელი გვარი</label>
