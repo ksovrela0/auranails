@@ -52,7 +52,7 @@ $param= [
     /*
     Merchant callbackURL - when payment status changes
     */
-    'callbackUrl'=>'http://localhost:8000/examples/callbackUrl.php', 
+    'callbackUrl'=>'https://auranails.ge/callbackUrl.php', 
     
     /*
     Specify if preauthorization is needed for the transaction. 
