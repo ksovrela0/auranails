@@ -796,7 +796,7 @@ switch ($act){
                     $db->execQuery();
                     $data['error'] = '';
 
-                    //sendSMS('change', $id);
+                    sendSMS('change', $id);
                 }
                 
             }
