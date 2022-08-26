@@ -161,7 +161,7 @@ function LoadKendoTable_product(hidden) {
     //KendoUI CLASS CONFIGS BEGIN
     var aJaxURL = "server-side/writes.action.php";
     var gridName = 'product_div';
-    var actions = '<div id="new_product">დამატება</div><div id="copy_product">კოპირება</div><div id="del_product"> წაშლა</div>';
+    var actions = '<div id="new_product">დამატება</div>';
     var editType = "popup"; // Two types "popup" and "inline"
     var itemPerPage = 100;
     var columnsCount = 9;
