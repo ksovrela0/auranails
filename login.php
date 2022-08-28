@@ -175,7 +175,7 @@
 	<!--[if gte IE 5]><frame></frame><![endif]-->
 	<script src="https://www.spruko.com/demo/dashlead/assets/plugins/ionicons/ionicons/ionicons.suuqn5vt.js" type="module" crossorigin="true" data-resources-url="https://www.spruko.com/demo/dashlead/assets/plugins/ionicons/ionicons/" data-namespace="ionicons"></script>
 </head>
-<body class="main-body">
+<body class="main-body main-sidebar-hide">
 	
 	<!-- Start Switcher -->
 	<div class="switcher-wrapper">

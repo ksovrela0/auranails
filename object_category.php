@@ -167,7 +167,7 @@
 	<script src="file:///C:/Users/giorgi/AppData/Local/Temp/Rar$EXa10780.17568/www.spruko.com/demo/dashlead/assets/plugins/ionicons/ionicons/ionicons.z18qlu2u.js" data-resources-url="file:///C:/Users/giorgi/AppData/Local/Temp/Rar$EXa10780.17568/www.spruko.com/demo/dashlead/assets/plugins/ionicons/ionicons/" data-namespace="ionicons"></script>
 </head>
 
-<body class="main-body">
+<body class="main-body main-sidebar-hide">
 	
 	<!-- Start Switcher -->
 	<?php include('includes/switcher.php'); ?>
