@@ -639,6 +639,7 @@ function save_new_client(){
                 client_name: $("#client_name_new").val(),
                 client_sex: $("#client_sex_new").val(),
                 client_phone: $("#client_phone_new").val(),
+                send_sms: $("#get_system_sms").is(':checked')
             },
             dataType: "json",
             success: function(data) {

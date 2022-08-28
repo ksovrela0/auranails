@@ -213,6 +213,7 @@ switch ($act){
     break;
     case 'get_client_page':
         $id = $_REQUEST['id'];
+        $checked = '';
         if($id == '' OR !isset($_REQUEST['id'])){
             $db->setQuery("INSERT INTO clients SET datetime = NOW()");
             $db->execQuery();
@@ -221,8 +222,10 @@ switch ($act){
 
             $db->setQuery("DELETE FROM clients WHERE id='$id'");
             $db->execQuery();
+
+            $checked = 'checked';
         }
-        $data = array('page' => getClientPage($id,getClient($id)));
+        $data = array('page' => getClientPage($id,getClient($id), $checked));
         break;
     case 'get_reserve_from_page':
         $id = $_REQUEST['proc_id'];
@@ -574,6 +577,14 @@ switch ($act){
         $client_phone   = $_REQUEST['client_phone'];
         $client_sex     = $_REQUEST['client_sex'];
 
+        $send_sms     = $_REQUEST['send_sms'];
+
+        $sms = 1;
+
+        if($send_sms == 'false'){
+            $sms = 0;
+        }
+
         $db->setQuery(" SELECT  COUNT(*) AS cc
                         FROM    clients
                         WHERE   id = '$id' AND actived = 1");
@@ -585,7 +596,8 @@ switch ($act){
                                                 datetime=NOW(),
                                                 client_name='$client_name',
                                                 client_phone='$client_phone',
-                                                client_sex='$client_sex'");
+                                                client_sex='$client_sex',
+                                                send_system_sms = '$sms'");
 
             $db->execQuery();
             $data['error'] = '';
@@ -594,7 +606,8 @@ switch ($act){
         else{
             $db->setQuery("UPDATE clients SET   client_name='$client_name',
                                                 client_phone='$client_phone',
-                                                client_sex='$client_sex'
+                                                client_sex='$client_sex',
+                                                send_system_sms = '$sms'
                             WHERE id='$id'");
             $db->execQuery();
             $data['error'] = '';
@@ -1771,7 +1784,8 @@ function getClient($id){
     $db->setQuery(" SELECT  id,
                             client_name,
                             client_sex,
-                            client_phone
+                            client_phone,
+                            send_system_sms
 
                     FROM    clients
                     WHERE   id = '$id'");
@@ -1815,8 +1829,16 @@ function getReserveFromPage($res = ''){
 
     return $data;
 }
-function getClientPage($id,$res = ''){
+function getClientPage($id,$res = '',$add){
     GLOBAL $db;
+
+    if($res['send_system_sms'] == 1){
+        $checked = 'checked';
+    }
+
+    if($add == 'checked'){
+        $checked = 'checked';
+    }
 
     $data .= '
 
@@ -1838,6 +1860,11 @@ function getClientPage($id,$res = ''){
             <div class="col-sm-4">
                 <label>ტელეფონი</label>
                 <input value="'.$res['client_phone'].'" data-nec="0" style="height: 18px; width: 95%;" type="number" oninput="maxLengthCheck(this)" maxLength="9" id="client_phone_new" class="idle" autocomplete="off">
+            </div>
+
+            <div class="col-sm-4">
+                <label>მიუვიდეს სისტემური SMS?</label>
+                <input type="checkbox" id="get_system_sms" '.$checked.'>
             </div>
         </div>
     </fieldset>
@@ -2191,12 +2218,14 @@ function sendSMS($template = '', $rowID = '', $text = ''){
                                 orders.write_date,
                                 procedures.start_proc,
                                 CONCAT(personal.name, ' ', personal.lastname) AS personal_name,
-                                `procedure`.name AS proc_name
+                                `procedure`.name AS proc_name,
+                                clients.send_system_sms
 
                         FROM    procedures
                         JOIN    orders ON orders.id = procedures.order_id AND orders.actived = 1
                         JOIN    personal ON personal.id = procedures.user_id
                         JOIN    `procedure` ON `procedure`.id = procedures.procedure_id
+                        JOIN    clients ON clients.id = orders.client_id AND clients.send_system_sms = 1
                         WHERE   procedures.actived = 1 AND procedures.order_id = '$rowID' AND procedures.send_sms_writing = 1 AND procedures.is_writing_sent = 0 AND procedures.status_id = 1 AND procedures.reservation = 0");
 
         $proceduresWriting = $db->getResultArray();
@@ -2238,12 +2267,14 @@ function sendSMS($template = '', $rowID = '', $text = ''){
                                 orders.write_date,
                                 procedures.start_proc,
                                 CONCAT(personal.name, ' ', personal.lastname) AS personal_name,
-                                `procedure`.name AS proc_name
+                                `procedure`.name AS proc_name,
+                                clients.send_system_sms
 
                         FROM    procedures
                         JOIN    orders ON orders.id = procedures.order_id AND orders.actived = 1
                         JOIN    personal ON personal.id = procedures.user_id
                         JOIN    `procedure` ON `procedure`.id = procedures.procedure_id
+                        JOIN    clients ON clients.id = orders.client_id AND clients.send_system_sms = 1
                         WHERE   procedures.actived = 1 AND procedures.id = '$rowID' AND procedures.status_id = 1");
 
         $proceduresWriting = $db->getResultArray();
@@ -2286,12 +2317,14 @@ function sendSMS($template = '', $rowID = '', $text = ''){
                                 orders.write_date,
                                 procedures.start_proc,
                                 CONCAT(personal.name, ' ', personal.lastname) AS personal_name,
-                                `procedure`.name AS proc_name
+                                `procedure`.name AS proc_name,
+                                clients.send_system_sms
 
                         FROM    procedures
                         JOIN    orders ON orders.id = procedures.order_id AND orders.actived = 1
                         JOIN    personal ON personal.id = procedures.user_id
                         JOIN    `procedure` ON `procedure`.id = procedures.procedure_id
+                        JOIN    clients ON clients.id = orders.client_id AND clients.send_system_sms = 1
                         WHERE   procedures.actived = 1 AND procedures.id = '$rowID' AND procedures.status_id = 3 AND procedures.reservation = 0");
 
         $proceduresWriting = $db->getResultArray();
