@@ -109,7 +109,8 @@ switch ($act){
                                 CONCAT(personal.name, ' ', personal.lastname),
                                 personal.phone,
                                 CONCAT(personal.work_start, '-', personal.work_end, ' ', GROUP_CONCAT(week.name SEPARATOR ', ')) AS 'grafik',
-                                CONCAT(personal.salary,'%')
+                                CONCAT(personal.salary,'%'),
+                                sort_n
                         FROM    personal
                         LEFT JOIN    personal_work_days ON personal_work_days.personal_id = personal.id
                         LEFT JOIN		 week ON week.id = personal_work_days.week_day_id
@@ -152,13 +153,16 @@ switch ($act){
         $work_end = $_REQUEST['work_end'];
         $days = $_REQUEST['grafik'];
 
+        $sort_n = $_REQUEST['sort_n'];
+
         if($id == ''){
             $db->setQuery("INSERT INTO  personal SET name = '$firstname',
                                                 lastname = '$lastname',
                                                 phone = '$phone',
                                                 salary = '$salary',
                                                 work_start = '$work_start',
-                                                work_end = '$work_end'");
+                                                work_end = '$work_end',
+                                                sort_n = '$sort_n'");
             $db->execQuery();
 
             $id = $db->getLastId();
@@ -169,7 +173,8 @@ switch ($act){
                                                 phone = '$phone',
                                                 salary = '$salary',
                                                 work_start = '$work_start',
-                                                work_end = '$work_end'
+                                                work_end = '$work_end',
+                                                sort_n = '$sort_n'
                                                 WHERE id = '$id'");
             $db->execQuery();
         }
@@ -204,7 +209,8 @@ function getPers($id){
                                 phone,
                                 salary,
                                 work_start,
-                                work_end
+                                work_end,
+                                sort_n
 
                     FROM        personal
                     WHERE       id = '$id'");
@@ -245,6 +251,10 @@ function getPage($res = ''){
                             <div class="col-sm-6"><input style="width:99%;" type="text" id="work_start" value="'.$res['work_start'].'"></div>
                             <div class="col-sm-6"><input style="width:99%;" type="text" id="work_end" value="'.$res['work_end'].'"></div>
                         </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <label>თანმიმდევრობა</label>
+                        <input value="'.$res['sort_n'].'" data-nec="0" style="height: 18px; width: 95%;" type="number" id="sort_n" class="idle" autocomplete="off">
                     </div>
                 </div>
                 <input type="hidden" id="personal_id" value="'.$res[id].'"

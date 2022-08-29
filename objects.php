@@ -444,21 +444,23 @@
 		var actions         = 	'<div class="btn btn-list"><a id="button_add" style="color:white;" class="btn ripple btn-primary"><i class="fas fa-plus-square"></i> დამატება</a><a id="button_trash" style="color:white;" class="btn ripple btn-primary"><i class="fas fa-trash"></i> გამორთვა</a></div>';
 		var editType        =   "popup"; // Two types "popup" and "inline"
 		var itemPerPage     = 	20;
-		var columnsCount    =	5;
+		var columnsCount    =	6;
 		var columnsSQL      = 	[
 									"id:string",
 									"name_geo:string",
 
 									"work_h:string",
 									"phone:string",
-                                    "address:string"
+                                    "address:string",
+									"sort_n:string"
 								];
 		var columnGeoNames  = 	[
 									"ID", 
 									"სახელი გვარი",
 									"ტელეფონი",
 									"სამუშაო გრაფიკი",
-                                    "პერსონალის ხელფასი"
+                                    "პერსონალის ხელფასი",
+									"თანმიმდევრობა"
 								];
 
 		var showOperatorsByColumns  =   [0,0,0,0,0,0,0,0,0,0]; 
@@ -642,6 +644,8 @@
 		params.salary 		= $("#salary").val();
 		params.work_start 	= $("#work_start").val();
 		params.work_end 	= $("#work_end").val();
+
+		params.sort_n 	= $("#sort_n").val();
 		
 		var grafik = [];
 		$('#grafik option:selected').toArray().map(c => grafik.push(c.value));

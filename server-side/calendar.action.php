@@ -16,7 +16,7 @@ switch ($act){
                         FROM    personal
 
                         WHERE personal.actived = 1 AND DAYOFWEEK('$date') IN (SELECT week_day_id FROM personal_work_days WHERE actived = 1 AND personal_id = personal.id)
-                        ORDER BY personal.id ASC");
+                        ORDER BY personal.sort_n ASC");
 
         $users = $db->getResultArray();
         $i = 0;
