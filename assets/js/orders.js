@@ -238,7 +238,7 @@ function save_order() {
                 $('#get_edit_page').dialog("close");
 
                 try{
-                    loadCalendar($("#cal_date").val(),'vertical');
+                    loadCalendar($("#cal_date").val(),'vertical', grand_minutes);
                 }
                 catch{
 
@@ -314,7 +314,7 @@ function save_product() {
                                     $("#product_div").data("kendoGrid").dataSource.read();
                                     $('#get_product_page').dialog("close");
                                     try{
-                                        loadCalendar($("#cal_date").val(),'vertical');
+                                        loadCalendar($("#cal_date").val(),'vertical', grand_minutes);
                                     }
                                     catch{
                                         
@@ -329,7 +329,7 @@ function save_product() {
                     $("#product_div").data("kendoGrid").dataSource.read();
                     $('#get_product_page').dialog("close");
                     try{
-                        loadCalendar($("#cal_date").val(),'vertical');
+                        loadCalendar($("#cal_date").val(),'vertical', grand_minutes);
                     }
                     catch{
                         
@@ -485,7 +485,7 @@ $(document).on('click', '.del_procedure', function(){
             success: function(data) {
                 $("#product_div").data("kendoGrid").dataSource.read();
                 try{
-                    loadCalendar($("#cal_date").val(),'vertical');
+                    loadCalendar($("#cal_date").val(),'vertical', grand_minutes);
                 }
                 catch{
                     
@@ -586,7 +586,7 @@ $(document).on('click', '#take_from_reserve', function(){
                                         $("#product_div").data("kendoGrid").dataSource.read();
                                         $("#reserve_div").data("kendoGrid").dataSource.read();
                                         try{
-                                            loadCalendar($("#cal_date").val(),'vertical');
+                                            loadCalendar($("#cal_date").val(),'vertical', grand_minutes);
                                         }
                                         catch{
                                             

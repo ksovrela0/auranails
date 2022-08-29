@@ -358,6 +358,14 @@
 			z-index: 49;
 		
 		}
+		.time_filter td:hover:not(.td_selected){
+			background-color: #d3d3d3;
+			cursor: pointer;
+		}
+
+		.td_selected{
+			background-color: #afafaf;
+		}
 
 		/* .top_first{
 			position: sticky;
@@ -402,8 +410,19 @@
 				<!-- End Page Header -->
 				<!-- Row -->
 					<div class="row" style="margin-bottom:10px;">
-						<div class="col-md-3">
+						<div class="col-md-1">
 							<input id="cal_date">
+						</div>
+						<div class="col-md-3">
+							<table class="time_filter" border="1" style="width:100%;text-align: center;">
+								<tr>
+									<td time="5">5 წთ</td>
+									<td class="td_selected" time="15">15 წთ</td>
+									<td time="20">20 წთ</td>
+									<td time="30">30 წთ</td>
+									<td time="60">1 სთ</td>
+								</tr>
+							</table>
 						</div>
 					</div>
 					<div class="row calendar_div">
@@ -527,6 +546,17 @@
 		
 	</div>
 	<script>
+		var grand_minutes = 15;
+		$(document).on('click', ".time_filter td", function(){
+			if(!$(this).hasClass('td_selected')){
+				$(".time_filter td").removeClass('td_selected');
+				$(this).addClass('td_selected')
+
+				loadCalendar($("#cal_date").val(),'vertical',$(this).attr('time'));
+				grand_minutes = $(this).attr('time');
+			}
+			
+		})
 		$(document).ready(function(){
 			var today = new Date();
 			var dd = today.getDate();
@@ -545,15 +575,15 @@
 				format:'Y-m-d',
 			});
 
-			loadCalendar($("#cal_date").val(),'vertical');			
+			loadCalendar($("#cal_date").val(),'vertical',grand_minutes);			
 		});
 
 		$(document).on('change', '#cal_date', function(){
-			loadCalendar($("#cal_date").val(),'vertical');
+			loadCalendar($("#cal_date").val(),'vertical',grand_minutes);
 			
 		})
 
-		function generateTDVertical(colspan = 4, user_count){
+		function generateTDVertical(colspan = 4, user_count,minute_step){
 			let html;
 			let start_hour = 9;
 			for(let i = 0; i<13; i++){
@@ -568,8 +598,11 @@
 						if(start_minute == '0'){
 							start_minute = '00';
 						}
+						if(start_minute < 10 && start_minute > 0){
+							start_minute = "0"+start_minute;
+						}
 						if(k == 0 && j%colspan == 0){
-							html += `<td rowspan="4" class="vert_time_block">`+start_hour+`:00</td>`
+							html += `<td rowspan="`+colspan+`" class="vert_time_block">`+start_hour+`:00</td>`
 							let child = user_index+2;
 							let personal_id = $(".top_header td:nth-child("+child+")").attr('personal-id')
 							html += `<td personal-id="`+personal_id+`" hour="`+start_hour+`" minute="`+start_minute+`" class="time_block left_table_vert"><p class="time_hover">`+start_hour+`:`+start_minute+`</p></td>`
@@ -584,7 +617,7 @@
 						
 					}
 					html += `</tr>`;
-					start_minute = parseInt(start_minute)+15;
+					start_minute = parseInt(start_minute)+parseInt(minute_step);
 				}
 				start_hour++;
 			}
@@ -675,7 +708,7 @@
 		});
 		
 
-		function loadCalendar(date, calendar_type = 'vertical'){
+		function loadCalendar(date, calendar_type = 'vertical', minutes = 15){
 			$(".calendar_div").html(``);
 			
 			
@@ -688,8 +721,10 @@
 													</tr>
 												</table>
 											</div>`);
-				let colspan = 4;
-				let step_minute = 15;
+
+				
+				let colspan = 60/minutes;
+				let step_minute = minutes;
 				let height_step = 30;
 
 				$.ajax({
@@ -712,7 +747,7 @@
 							pers_procedures[i.id] = i.procedures;
 							console.log(x);
 							if(x == user_count-1){
-								$(".calendar_table").append(generateTDVertical(4, user_count));
+								$(".calendar_table").append(generateTDVertical(colspan, user_count, step_minute));
 							}
 
 						})
@@ -729,13 +764,15 @@
 									minute = 0;
 								}
 								alert(minute) */
-
+								
 								let height = (u.duration/step_minute)*height_step;
 
-								$(".time_block[personal-id='"+x+"'][hour='"+hour+"'][minute='"+minute+"']").html(	`<div order-id="`+u.order_id+`" sort="`+u.procedure_id+`" style="width:100%;height: `+height+`px;background-color:`+u.color+`" class="write_block">
+								let top = (((hour-9)*60)/step_minute)*height_step + (minute/step_minute)*height_step;
+
+								$(".time_block[personal-id='"+x+"'][hour='09'][minute='00']").html(	`<div order-id="`+u.order_id+`" sort="`+u.procedure_id+`" style="width:100%;height: `+height+`px;background-color:`+u.color+`; top:`+top+`" class="write_block">
 																														<span>`+u.client_name+` `+u.client_phone+`</span>
 																													</div>
-																													<div order-id="`+u.order_id+`" sort="`+u.procedure_id+`" class="order_detail_left">
+																													<div order-id="`+u.order_id+`" sort="`+u.procedure_id+`" style="top:`+top+`" class="order_detail_left">
 																														<p><b>პერსონალი:</b> `+u.personal+`</p>
 																														<p><b>კლიენტი:</b> `+u.client_name+`</p>
 																														<p><b>ტელეფონი:</b> `+u.client_phone+`</p>
