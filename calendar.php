@@ -769,7 +769,7 @@
 
 								let top = (((hour-9)*60)/step_minute)*height_step + (minute/step_minute)*height_step;
 
-								$(".time_block[personal-id='"+x+"'][hour='09'][minute='00']").html(	`<div order-id="`+u.order_id+`" sort="`+u.procedure_id+`" style="width:100%;height: `+height+`px;background-color:`+u.color+`; top:`+top+`" class="write_block">
+								$(".time_block[personal-id='"+x+"'][hour='09'][minute='00']").append(	`<div order-id="`+u.order_id+`" sort="`+u.procedure_id+`" style="width:100%;height: `+height+`px;background-color:`+u.color+`; top:`+top+`" class="write_block">
 																														<span>`+u.client_name+` `+u.client_phone+`</span>
 																													</div>
 																													<div order-id="`+u.order_id+`" sort="`+u.procedure_id+`" style="top:`+top+`" class="order_detail_left">
