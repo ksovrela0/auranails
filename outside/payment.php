@@ -4,7 +4,7 @@ namespace Geopaysoft\TBCCheckout;
 $amount = $_REQUEST['ammount'];
 
 
-$amount = 0.01;
+
 require 'TBCCheckout.php';
 
 $TBCCheckout = new TBCCheckout('7000836','an1Wxhy7h7vJl4Ia','zMW21YAIxRdPNxLOSGx8Adree0ODm4h2',true);
